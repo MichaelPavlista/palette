@@ -1,0 +1,19 @@
+{
+  "name": "pavlista/palette",
+  "description": "An on-demand image handling and manipulation library",
+  "keywords": ["image", "thumbnail", "watermark", "gd", "imagick", "nette"],
+  "homepage": "https://github.com/MichaelPavlista/palette",
+  "license": ["MIT"],
+  "authors": [
+    {
+      "name": "Michael Pavlista",
+      "homepage": "http://www.pavlista.cz/"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "classmap": ["src/"]
+  }
+}

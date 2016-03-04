@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * This file is part of the Palette (https://github.com/MichaelPavlista/palette)
+ * Copyright (c) 2016 Michael Pavlista (http://www.pavlista.cz/)
+ *
+ * @author Michael Pavlista
+ * @email  michael@pavlista.cz
+ * @link   http://pavlista.cz/
+ * @link   https://www.facebook.com/MichaelPavlista
+ * @copyright 2016
+ */
+
 namespace Palette\Effect;
 
 use Palette\Picture;
@@ -13,7 +24,7 @@ class Colorspace extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Aplikuje efekt na obrï¿½zek
      * @param Picture $picture
      */
     public function apply(Picture $picture) {
@@ -26,13 +37,13 @@ class Colorspace extends PictureEffect {
 
             $path = realpath(__DIR__ . '/../Profiles/') . DIRECTORY_SEPARATOR;
 
-            // POKUD NEMÁME CMYK ICC PROFIL PØIDÁME HO
+            // POKUD NEMï¿½ME CMYK ICC PROFIL Pï¿½IDï¿½ME HO
             if(array_search('icc', $profiles) === false) {
 
                 $image->profileImage('icc', file_get_contents($path . 'USWebUncoated.icc'));
             }
 
-            // PØIDÁNÍ RGB PROFILU
+            // Pï¿½IDï¿½Nï¿½ RGB PROFILU
             $image->profileImage('icc', file_get_contents($path . 'sRGB _Color_Space_Profile.icm'));
         }
 

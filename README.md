@@ -1,1 +1,2 @@
-# Pallete: An on-demand image handling and manipulation library
+# Pallete
+An on-demand image handling and manipulation library

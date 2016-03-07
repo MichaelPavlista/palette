@@ -16,13 +16,13 @@ namespace Palette\Effect;
 use Palette\Picture;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Border
+ * @package Palette\Effect
  */
 class Border extends PictureEffect {
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -32,9 +32,8 @@ class Border extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt pro aplikování ohraničení obrázku
+     * Border effect constructor.
      * @param int $width
      * @param int $height
      * @param string $color
@@ -48,7 +47,7 @@ class Border extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {

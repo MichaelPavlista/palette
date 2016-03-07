@@ -18,14 +18,13 @@ use ImagickDraw;
 use Imagick;
 
 /**
- * Class Resize
- * @package InstagramEffect
+ * Class Toaster
+ * @package Palette\Effect
  */
 class Toaster extends PictureEffect {
 
-
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {
@@ -43,6 +42,12 @@ class Toaster extends PictureEffect {
     }
 
 
+    /**
+     * Colorize image
+     * @param Imagick $image
+     * @param $color
+     * @param int $alpha
+     */
     public function colorize(Imagick $image, $color, $alpha = 1) {
 
         $rectangle = new ImagickDraw();

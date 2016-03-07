@@ -16,14 +16,13 @@ namespace Palette\Effect;
 use Palette\Picture;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Enhance
+ * @package Palette\Effect
  */
 class Enhance extends PictureEffect {
 
-
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {

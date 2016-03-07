@@ -16,13 +16,13 @@ namespace Palette\Effect;
 use Palette\Picture;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Contrast
+ * @package Palette\Effect
  */
 class Contrast extends PictureEffect {
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -30,10 +30,9 @@ class Contrast extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt změny kontrastu obrázku
-     * @param $contrast
+     * Contrast constructor.
+     * @param int $contrast
      */
     public function __construct($contrast) {
 
@@ -42,7 +41,7 @@ class Contrast extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {

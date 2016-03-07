@@ -16,13 +16,13 @@ namespace Palette\Effect;
 use Palette\Picture;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Brightness
+ * @package Palette\Effect
  */
 class Brightness extends PictureEffect {
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -30,9 +30,8 @@ class Brightness extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt změny jasu obrázku
+     * Brightness constructor.
      * @param int $brightness
      */
     public function __construct($brightness) {
@@ -42,7 +41,7 @@ class Brightness extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {

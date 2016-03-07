@@ -17,13 +17,13 @@ use Palette\Picture;
 use Imagick;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Watermark
+ * @package Palette\Effect
  */
 class Watermark extends PictureEffect {
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -37,9 +37,8 @@ class Watermark extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt obrázkového vodoznaku
+     * Watermark constructor.
      * @param $watermark
      * @param string $position
      * @param float $opacity
@@ -65,7 +64,7 @@ class Watermark extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {
@@ -81,7 +80,7 @@ class Watermark extends PictureEffect {
 
 
     /**
-     * Přidá vodoznak na obrázek pomocí knihovny Imagick
+     * Adds watermark on the image using the library Imagick
      * @param Imagick $image
      */
     private function watermarkImagick(Imagick $image) {

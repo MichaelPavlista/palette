@@ -21,9 +21,8 @@ use Palette\Picture;
  */
 class Blur extends PictureEffect {
 
-
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {

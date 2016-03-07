@@ -22,14 +22,20 @@ use ReflectionMethod;
 abstract class PictureEffect {
 
     /**
-     * @var array nastavení efektu
+     * @var array effect settings
      */
     protected $settings = array();
 
 
+    /**
+     * Apply effect on picture
+     * @param Picture $picture
+     */
+    abstract function apply(Picture $picture);
+
 
     /**
-     * Efekt obrázku
+     * PictureEffect constructor.
      */
     public function __construct() {
 
@@ -37,72 +43,10 @@ abstract class PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
-     * @param Picture $picture
+     * Restore effect state from array
+     * @param array $settings
      */
-    abstract function apply(Picture $picture);
-
-
-    /**
-     * Získání hodnoty nastavení efektu
-     * @param $name
-     * @return mixed
-     */
-    final public function __get($name) {
-
-        if($this->__isset($name)) {
-
-            return $this->settings[$name];
-        }
-
-        return NULL;
-    }
-
-
-    /**
-     * Nastavení hodnoty nastavení efektu
-     * @param $name
-     * @param $value
-     */
-    final public function __set($name, $value) {
-
-        if($this->__isset($name)) {
-
-            $this->settings[$name] = $value;
-        }
-        else {
-
-            trigger_error('Unknown effect parameter: ' . $name, E_USER_WARNING);
-        }
-    }
-
-
-    /**
-     * Zjištění zda je hodnota nastavení efektu existuje
-     * @param $name
-     * @return bool
-     */
-    final public function __isset($name) {
-
-        return array_key_exists($name, $this->settings);
-    }
-
-
-    /**
-     * Smaže hodnotu nastavení efektu
-     * @param $name
-     */
-    public function __unset($name) {
-
-        $this->settings[$name] = NULL;
-    }
-
-
-    /**
-     * Obnoví nastavení efektu z numerického pole
-     * @param $settings
-     */
-    public function restore($settings) {
+    public function restore(array $settings = array()) {
 
         $settings = array_values($settings);
 
@@ -129,9 +73,81 @@ abstract class PictureEffect {
 
 
     /**
-     * @param $hex
+     * Calculates new picture dimension after applying this effect
+     * @param int $width
+     * @param int $height
+     * @return array w,h
+     */
+    public function getNewDimensions($width, $height) {
+
+        return array(
+
+            'w' => $width,
+            'h' => $height,
+        );
+    }
+
+
+    /**
+     * Get effect setting value
+     * @param string $name
+     * @return mixed
+     */
+    final public function __get($name) {
+
+        if($this->__isset($name)) {
+
+            return $this->settings[$name];
+        }
+
+        return NULL;
+    }
+
+
+    /**
+     * Sets effect setting value
+     * @param string $name
+     * @param mixed $value
+     */
+    final public function __set($name, $value) {
+
+        if($this->__isset($name)) {
+
+            $this->settings[$name] = $value;
+        }
+        else {
+
+            trigger_error('Unknown effect parameter: ' . $name, E_USER_WARNING);
+        }
+    }
+
+
+    /**
+     * Is effect setting already defined?
+     * @param $name
+     * @return bool
+     */
+    final public function __isset($name) {
+
+        return array_key_exists($name, $this->settings);
+    }
+
+
+    /**
+     * Delete effect setting value
+     * @param $name
+     */
+    public function __unset($name) {
+
+        $this->settings[$name] = NULL;
+    }
+
+
+    /**
+     * Hexadecimal color to RGB conversion
+     * @param string $hex color
      * @param bool $returnString
-     * @return array
+     * @return array|string
      */
     public function hex2rgb($hex, $returnString = FALSE) {
 
@@ -160,7 +176,7 @@ abstract class PictureEffect {
 
 
     /**
-     * Vygenerování ImageQuery pro aktuální efekt
+     * Renders Palette image query for current effect
      * @return string
      */
     public function __toString() {
@@ -168,21 +184,6 @@ abstract class PictureEffect {
         $arguments = ';' . implode(';', $this->settings);
 
         return substr(get_class($this), strrpos(get_class($this), '\\') + 1) . substr($arguments, 0, strlen($arguments));
-    }
-
-
-    /**
-     * @param $width
-     * @param $height
-     * @return array
-     */
-    public function getNewDimensions($width, $height) {
-
-        return array(
-
-            'w' => $width,
-            'h' => $height,
-        );
     }
 
 }

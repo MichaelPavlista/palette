@@ -26,32 +26,32 @@ use Palette\Effect\Resize;
 class Picture {
 
     /**
-     * @const worker
+     * @const picture generation worker (Imagick extension)
      */
     const WORKER_IMAGICK = 'imagick';
 
     /**
-     * @const worker
+     * @const picture generation worker (GD extension)
      */
     const WORKER_GD = 'gd';
 
     /**
-     * @var string worker
+     * @var string picture generation worker
      */
     protected $worker;
 
     /**
-     * @var string cesta k obrázku
+     * @var string path to source image file
      */
     protected $image;
 
     /**
-     * @var int kvalita obrázku
+     * @var int image compress quality
      */
     protected $quality = 100;
 
     /**
-     * @var array aplikované efekty
+     * @var array applied effects on picture
      */
     protected $effect = array();
 
@@ -61,12 +61,12 @@ class Picture {
     private $resource;
 
     /**
-     * @var null|IPictureGenerator
+     * @var null|IPictureGenerator picture generator instance
      */
     protected $storage = NULL;
 
     /**
-     * @var array
+     * @var array generated temp files
      */
     protected $tmpImage = array();
 
@@ -74,13 +74,13 @@ class Picture {
     /**
      * Picture constructor.
      * @param $image
-     * @param IPictureGenerator|NULL $pictureStorage
-     * @param null $worker
+     * @param IPictureGenerator|NULL $pictureGenerator
+     * @param null $worker worker constant
      * @throws Exception
      */
-    public function __construct($image, IPictureGenerator $pictureStorage = NULL, $worker = NULL) {
+    public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL) {
 
-        // PODPORA PRO IMAGE QUERY
+        // SUPPORT FOR PALETTE IMAGE QUERY
         if(strpos($image, '@')) {
 
             $imageParts  = explode('@', $image);
@@ -118,26 +118,55 @@ class Picture {
             $this->image = realpath($image);
         }
 
-        // OVĚŘENÍ DOSTUPNOSTI SOUBORU OBRÁZKU
+        // CHECK IF IMAGE EXISTS AND IS READABLE
         if(!file_exists($this->image) || !is_readable($this->image)) {
 
             throw new Exception('Image file missing or not readable');
         }
 
-        $this->storage = $pictureStorage;
-        $this->worker  = $worker;
+        $this->storage = $pictureGenerator;
+        $this->worker = $worker;
     }
 
 
     /**
-     * Načte obrázek jako resource pro aplikování efektů
+     * Return path to source image file
+     * @return string
+     */
+    public function getImage() {
+
+        return $this->image;
+    }
+
+
+    /**
+     * Is PHP extension Imagick available?
+     * @return bool
+     */
+    public static function imagickAvailable() {
+
+        return extension_loaded('imagick');
+    }
+
+
+    /**
+     * Is PHP extension GD available?
+     * @return bool
+     */
+    public static function gdAvailable() {
+
+        return extension_loaded('gd');
+    }
+
+
+    /**
+     * Loads an image as a resource for applying effects and transformations
      * @throws Exception
      */
     protected function loadImageResource() {
 
         if(empty($this->resource)) {
 
-            // ULOŽENÍ ZDROJOVÝCH DAT OBRÁZKU PODLE POUŽITÉ KNIHOVNY
             if((is_null($this->worker) || $this->worker === $this::WORKER_IMAGICK) && $this->imagickAvailable()) {
 
                 $this->resource = new Imagick($this->image);
@@ -148,44 +177,14 @@ class Picture {
             }
             else {
 
-                throw new Exception('Required extensions missing');
+                throw new Exception('Required extensions missing, extension GD or Imagick is required');
             }
         }
     }
 
 
     /**
-     * Vrací cestu ke zdrojovému obrázku
-     * @return string
-     */
-    public function getImage() {
-
-        return $this->image;
-    }
-
-
-    /**
-     * Je PHP rozšíření Imagic dostupné?
-     * @return bool
-     */
-    public static function imagickAvailable() {
-
-        return extension_loaded('imagick');
-    }
-
-
-    /**
-     * Je PHP rozšíření GD dostupné?
-     * @return bool
-     */
-    public static function gdAvailable() {
-
-        return extension_loaded('gd');
-    }
-
-
-    /**
-     * Upravuje se tento obrázek přes Imagick?
+     * Modifies this image through Imagick?
      * @return bool
      */
     public function isImagick() {
@@ -195,7 +194,7 @@ class Picture {
 
 
     /**
-     * Upravuje se tento obrázek přes GD?
+     * Modifies this image through GD?
      * @return bool
      */
     public function isGd() {
@@ -205,19 +204,8 @@ class Picture {
 
 
     /**
-     * Zjištění workeru zadaného zdroje obrázku (GD vs Imagick)
-     * @param $resource
-     * @return string
-     */
-    public static function getWorker($resource) {
-
-        return is_resource($resource) ? self::WORKER_GD : self::WORKER_IMAGICK;
-    }
-
-
-    /**
-     * Získání resource obrázku
-     * @param null $worker
+     * Get resource of picture in specified format (GD resource / Imagick instance).
+     * @param null $worker worker constant
      * @return Imagick|resource
      */
     public function getResource($worker = NULL) {
@@ -241,8 +229,8 @@ class Picture {
 
 
     /**
-     * Provede převod mezi GD resource a instancí Imagick
-     * @param $convertTo
+     * Performs conversion between GD and Imagick resource instances.
+     * @param string $convertTo worker constant
      * @return Imagick|resource
      * @throws Exception
      */
@@ -271,7 +259,18 @@ class Picture {
 
 
     /**
-     * Nastavení nového resource obrázku
+     * Find used worker for specified image source (GD vs Imagick)
+     * @param Imagick|resource $resource
+     * @return string worker constant
+     */
+    protected function getWorker($resource) {
+
+        return is_resource($resource) ? self::WORKER_GD : self::WORKER_IMAGICK;
+    }
+
+
+    /**
+     * Sets the resource picture to another
      * @param Imagick|resource $resource
      */
     public function setResource($resource) {
@@ -281,7 +280,6 @@ class Picture {
             $this->resource = $resource;
         }
 
-        // ZKONVERTOVÁNÍ ZDROJE OBRÁZKU
         $this->tmpImage[] = $tmpImage = tempnam(sys_get_temp_dir(), 'picture');
 
         if($this->getWorker($resource) === $this::WORKER_GD) {
@@ -305,8 +303,8 @@ class Picture {
 
 
     /**
-     * Vytvoření GD resource ze souboru obrázku
-     * @param $imageFile
+     * Creating a resource of GD image file
+     * @param string $imageFile image file path
      * @return resource
      * @throws Exception
      */
@@ -327,14 +325,12 @@ class Picture {
                 return imagecreatefrompng($imageFile);
         }
 
-        throw new Exception('GD resource not supported extension');
+        throw new Exception('GD resource not supported image extension');
     }
 
 
-    /* =========================== PRÁCE S EFEKTY =========================== */
-
     /**
-     * Získání image query stringu pro vytvoření obrázku s aktuálními efekty
+     * Get image query string to create image with the actual effects
      * @return string
      */
     public function getImageQuery() {
@@ -356,7 +352,8 @@ class Picture {
 
 
     /**
-     * @param PictureEffect|string $effect
+     * Add new picture effect
+     * @param $effect
      * @throws Exception
      */
     public function effect($effect) {
@@ -378,16 +375,17 @@ class Picture {
             }
             else {
 
-                throw new Exception('Unknown filter');
+                throw new Exception('Unknown Palette effect instance');
             }
         }
     }
 
 
     /**
-     * @param $width
-     * @param $height
-     * @param null $resizeMode
+     * Resize picture by specified dimensions
+     * @param int $width
+     * @param int $height
+     * @param null $resizeMode (Palette\Effect\Resize constant)
      */
     public function resize($width, $height = NULL, $resizeMode = NULL) {
 
@@ -401,6 +399,7 @@ class Picture {
 
 
     /**
+     * Set picture output quality 1 - 100
      * @param int $quality
      */
     public function quality($quality = 90) {
@@ -413,7 +412,7 @@ class Picture {
 
 
     /**
-     * Uloží upravený obrázek do úložiště, popřípadě určeného umístění
+     * Save the edited image to the repository, or specific location
      * @param null $file
      */
     public function save($file = NULL) {
@@ -434,81 +433,18 @@ class Picture {
 
 
     /**
-     * Odešle obrázek do prohlížeče
-     */
-    public function output() {
-
-        $imageFile = $this->storage->getPath($this);
-
-        if(file_exists($imageFile)) {
-
-            header('Content-Type: image');
-            header('Content-Length: ' . filesize($imageFile));
-            readfile($imageFile);
-            
-            exit;
-        }
-    }
-
-
-    /**
-     * Vrací url adresu k obrázku, pokud obrázek nebyl uložen, tak ho uloží
-     * @return null|string
-     */
-    public function getUrl() {
-
-        if($this->storage) {
-
-            $this->save();
-
-            return $this->storage->getUrl($this);
-        }
-
-        return NULL;
-    }
-
-
-    /**
-     * Vrací html tag <img /> s aktuálním obrázkem
-     * @param null $alt
-     * @param null $title
-     * @param string $js
-     * @return string
-     */
-    public function getImageHtml($alt = NULL, $title = NULL, $js = '') {
-
-        if(is_null($title) && $alt) {
-
-            $title = $alt;
-        }
-
-        return sprintf('<img src="%s" alt="%s" title="%s" %s/>', $this->getUrl(), $alt, $title, $js ? $js . ' ' : '');
-    }
-
-
-    /**
-     * Vrací html tag <img /> s aktuálním obrázkem
-     * @return string
-     */
-    public function __toString() {
-
-        return $this->getImageHtml();
-    }
-
-
-    /**
-     * Vyrendruje obrázek ze zdroje a uloží
+     * Generate image from a source and save to specified file
      * @param $file
      */
     protected function savePicture($file) {
 
         $this->loadImageResource();
 
-        // PODPORA PRO CMYK OBRÁZKY
-        $colorspace = new Colorspace();
-        $colorspace->apply($this);
+        // SUPPORT FOR CMYK IMAGES
+        $colorSpace = new Colorspace();
+        $colorSpace->apply($this);
 
-        // APLIKOVÁNÍ EFEKTŮ NA OBRÁZEK
+        // APPLY EFFECT ON IMAGE
         foreach($this->effect as $effect) {
 
             if($effect instanceof PictureEffect) {
@@ -535,7 +471,7 @@ class Picture {
         chmod($file, 0777);
         touch($file, filemtime($this->getImage()));
 
-        // SMAZÁNÍ DOČASNÝCH SOUBORŮ
+        // DELETE TEMP FILES
         foreach($this->tmpImage as $tmpImage) {
 
             unlink($tmpImage);
@@ -544,8 +480,44 @@ class Picture {
 
 
     /**
-     * Získání nových rozměrů po aplikování efektů na obrázek
-     * @return array
+     * Output the image to the browser
+     * @return void
+     * @exit
+     */
+    public function output() {
+
+        $imageFile = $this->storage->getPath($this);
+
+        if(file_exists($imageFile)) {
+
+            header('Content-Type: image');
+            header('Content-Length: ' . filesize($imageFile));
+            readfile($imageFile);
+            exit;
+        }
+    }
+
+
+    /**
+     * Returns the URL of the image, if is needed save this image
+     * @return null|string
+     */
+    public function getUrl() {
+
+        if($this->storage) {
+
+            $this->save();
+
+            return $this->storage->getUrl($this);
+        }
+
+        return NULL;
+    }
+
+
+    /**
+     * Getting new dimensions for applying effects to an image, the image does not save
+     * @return array w,h
      */
     public function getDimensions() {
 

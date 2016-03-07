@@ -16,13 +16,13 @@ namespace Palette\Effect;
 use Palette\Picture;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Smooth
+ * @package Palette\Effect
  */
 class Smooth extends PictureEffect {
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -30,9 +30,8 @@ class Smooth extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt úpravy hladkosti
+     * Smooth constructor.
      * @param $smooth
      */
     public function __construct($smooth) {
@@ -42,7 +41,7 @@ class Smooth extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {

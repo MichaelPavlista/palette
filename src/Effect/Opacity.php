@@ -16,13 +16,13 @@ namespace Palette\Effect;
 use Palette\Picture;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Opacity
+ * @package Palette\Effect
  */
 class Opacity extends PictureEffect {
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -30,10 +30,9 @@ class Opacity extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt změny průhlednosti obrázku
-     * @param float $opacity průhlednost
+     * Opacity constructor.
+     * @param float $opacity
      */
     public function __construct($opacity) {
 
@@ -42,7 +41,7 @@ class Opacity extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {

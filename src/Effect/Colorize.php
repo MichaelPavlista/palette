@@ -16,13 +16,13 @@ namespace Palette\Effect;
 use Palette\Picture;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Colorize
+ * @package Palette\Effect
  */
 class Colorize extends PictureEffect {
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -30,10 +30,9 @@ class Colorize extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt zbarvení obrázku do určité barvy
-     * @param $color
+     * Colorize constructor.
+     * @param string $color
      */
     public function __construct($color) {
 
@@ -42,7 +41,7 @@ class Colorize extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {

@@ -69,7 +69,7 @@ class CurrentExecution implements IPictureGenerator {
     /**
      * Get picture instance for transformation performs by this picture generator.
      * @param string $image path to image file
-     * @param string|null $worker
+     * @param string|null $worker Palette\Picture worker constant
      * @return Picture
      */
     public function loadPicture($image, $worker = NULL) {
@@ -85,7 +85,7 @@ class CurrentExecution implements IPictureGenerator {
      */
     public function save(Picture $picture) {
 
-        $pictureFile = $this->getFile($picture);
+        $pictureFile = $this->getPath($picture);
 
         if(!$this->isFileActual($pictureFile, $picture)) {
 

@@ -17,13 +17,13 @@ use Palette\Picture;
 use ImagickPixel;
 
 /**
- * Class Resize
- * @package Effect
+ * Class Rotate
+ * @package Palette\Effect
  */
 class Rotate extends PictureEffect {
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -32,21 +32,20 @@ class Rotate extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt otočení obrázku
+     * Rotate constructor.
      * @param $degrees
      * @param string $background
      */
     public function __construct($degrees, $background = '#FFF') {
 
-        $this->degrees    = $degrees;
+        $this->degrees = $degrees;
         $this->background = $background;
     }
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {
@@ -63,9 +62,10 @@ class Rotate extends PictureEffect {
 
 
     /**
-     * @param $width
-     * @param $height
-     * @return array
+     * Calculates new picture dimension after applying this effect
+     * @param int $width
+     * @param int $height
+     * @return array w,h
      */
     public function getNewDimensions($width, $height) {
 

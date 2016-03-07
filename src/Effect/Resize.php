@@ -18,37 +18,37 @@ use Palette\Picture;
 
 /**
  * Class Resize
- * @package Effect
+ * @package Palette\Effect
  */
 class Resize extends PictureEffect {
 
     /**
-     * @const mód změny rozměrů
+     * @const image resize mode
      */
     const MODE_FIT = 'fit';
 
     /**
-     * @const mód změny rozměrů
+     * @const mód image resize mode
      */
     const MODE_FILL = 'fill';
 
     /**
-     * @const mód změny rozměrů
+     * @const mód image resize mode
      */
     const MODE_STRETCH = 'stretch';
 
     /**
-     * @const mód změny rozměrů
+     * @const mód image resize mode
      */
     const MODE_CROP = 'crop';
 
     /**
-     * @const mód změny rozměrů
+     * @const mód image resize mode
      */
     const MODE_EXACT = 'exact';
 
     /**
-     * @var array nastavení tohoto filtru
+     * @var array effect settings
      */
     protected $settings = array(
 
@@ -60,12 +60,13 @@ class Resize extends PictureEffect {
     );
 
 
-
     /**
-     * Efekt zmenšení obrázku podle zadaných kritérií
+     * Resize constructor.
      * @param $width
      * @param null $height
      * @param null $resizeMode
+     * @param int $resizeSmaller
+     * @param string $color
      */
     public function __construct($width, $height = NULL, $resizeMode = NULL, $resizeSmaller = 0, $color = '#FFFFFF') {
 
@@ -83,7 +84,7 @@ class Resize extends PictureEffect {
 
 
     /**
-     * Aplikuje efekt na obrázek
+     * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {
@@ -100,9 +101,10 @@ class Resize extends PictureEffect {
 
 
     /**
-     * @param $width
-     * @param $height
-     * @return array
+     * Calculates new picture dimension after applying this effect
+     * @param int $width
+     * @param int $height
+     * @return array w,h
      */
     public function getNewDimensions($width, $height) {
 
@@ -149,7 +151,7 @@ class Resize extends PictureEffect {
 
 
     /**
-     * Změna rozměrů obrázku pomocí Imagick
+     * Resizing an image using Imagick
      * @param Imagick $imagick
      */
     private function resizeImagick(Imagick $imagick, Picture $picture) {
@@ -210,7 +212,7 @@ class Resize extends PictureEffect {
 
 
     /**
-     * Změna rozměrů obrázku pomocí GD
+     * Resizing an image using GD
      * @param $resource
      */
     private function resizeGd(&$resource) {

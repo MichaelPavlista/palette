@@ -11,40 +11,22 @@
  * @copyright 2016
  */
 
-namespace Palette;
+namespace Palette\Generator;
+
+use Palette\Picture;
 
 /**
- * Class ServerStorage
- * @package Palette
+ * Class Server
+ * Implementation of IPictureGenerator which generates the desired image variants on remote server.
+ * @package Palette\Generator
  */
-class ServerStorage extends PictureStorage {
+class Server extends CurrentExecution implements IServerGenerator {
 
     /**
-     * Ověří zda obrázek v úložišti je aktuální
-     * @param $file
-     * @return bool
-     */
-    public function isFileActual($file, Picture $picture) {
-
-        return @filemtime($file) === @filemtime($picture->getImage());
-    }
-
-
-    /**
-     * Ověří zda obrázek již v úložišti fyzicky existuje
-     * @param $file
-     * @return bool
-     */
-    public function isFileExists($file) {
-
-        return file_exists($file);
-    }
-
-
-    /**
-     * Uloží obrázek do úložiště
+     * Save picture variant to generator storage.
+     * Server generator does't save itself.
      * @param Picture $picture
-     * @return mixed
+     * @return void
      */
     public function save(Picture $picture) {
 
@@ -53,37 +35,45 @@ class ServerStorage extends PictureStorage {
 
 
     /**
-     * Vrací cestu k obrázku v úložišti, neověřuje zda obrázek fyzicky existuje.
+     * Returns file path of the image file variant.
+     * Does't verify if the file physically exists.
      * @param Picture $picture
-     * @return string absolutní cesta k obrázku
+     * @return string
      */
-    public function getFile(Picture $picture) {
+    public function getPath(Picture $picture) {
 
         $storagePath = str_replace($this->basePath, DIRECTORY_SEPARATOR, pathinfo($picture->getImage(), PATHINFO_DIRNAME) . '/');
 
-        return $this->unifyPath($this->path . '/' . $storagePath . '/' . $this->getFileName($picture));
+        return $this->unifyPath($this->storagePath . '/' . $storagePath . '/' . $this->getFileName($picture));
     }
 
 
     /**
-     * Vrací absolutní url adresu k obrázku v úložišti
+     * Returns the absolute URL of the image to the desired variant.
      * @param Picture $picture
      * @return string
      */
     public function getUrl(Picture $picture) {
 
-        $file = $this->getFile($picture);
+        $file = $this->getPath($picture);
 
         $url = str_replace($this->basePath, DIRECTORY_SEPARATOR, pathinfo($picture->getImage(), PATHINFO_DIRNAME) . '/');
-        $url = $this->unifyUrl($this->url . '/' . $url . '/' . $this->getFileName($picture));
+        $url = preg_replace('/([^:])(\/{2,})/', '$1/', $this->storageUrl . '/' . $url . '/' . $this->getFileName($picture));
 
-        if(!$this->isFileActual($file, $picture) && !$this->isFileExists($file)) {
+        // BUILD VARIANT URL
+        $variantActual = $this->isFileActual($file, $picture);
+
+        if($variantActual === FALSE) {
 
             return $url . '?imageQuery=' . urlencode($picture->getImage() . '@' . $picture->getImageQuery());
         }
-        elseif(!$this->isFileActual($file, $picture) && $this->isFileExists($file)) {
+        elseif($variantActual === NULL) {
 
-            $this->requestWithoutWaiting($this->url . 'palette-server.php', array('regenerate' => $picture->getImage() . '@' . $picture->getImageQuery()));
+            $this->requestWithoutWaiting(
+
+                $this->storageUrl . 'palette-server.php',
+                array('regenerate' => $picture->getImage() . '@' . $picture->getImageQuery())
+            );
         }
 
         return $url;
@@ -91,31 +81,32 @@ class ServerStorage extends PictureStorage {
 
 
     /**
-     * Vrací výsledek serveru pro vzdálené generování obrázků
+     * Execute server generator backend.
+     * @return void
      */
     public function serverResponse() {
 
         if(!empty($_GET['imageQuery'])) {
 
             $picture = $this->loadPicture($_GET['imageQuery']);
-            $picture->save($this->getFile($picture));
+            $picture->save($this->getPath($picture));
             $picture->output();
         }
 
         if(!empty($_POST['regenerate'])) {
 
             $picture = $this->loadPicture($_POST['regenerate']);
-            $picture->save($this->getFile($picture));
+            $picture->save($this->getPath($picture));
         }
     }
 
 
     /**
-     * Zašle POST request bez čekání na odpověď od serveru
-     * @param $url
-     * @param $params
+     * Sends the POST request without waiting for a response.
+     * @param string $url
+     * @param array $params
      */
-    function requestWithoutWaiting($url, $params) {
+    function requestWithoutWaiting($url, array $params = array()) {
 
         $post = array();
 
@@ -142,6 +133,18 @@ class ServerStorage extends PictureStorage {
 
         fwrite($fp, $command);
         fclose($fp);
+    }
+
+
+    /**
+     * Unify filesystem path
+     * @param string $path
+     * @param string $slash
+     * @return string
+     */
+    protected function unifyPath($path, $slash = DIRECTORY_SEPARATOR) {
+
+        return preg_replace('/\\'. $slash .'+/', $slash, str_replace(array('/', "\\"), $slash, $path));
     }
 
 }

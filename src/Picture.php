@@ -13,9 +13,9 @@
 
 namespace Palette;
 
+use Palette\Generator\IPictureGenerator;
 use ReflectionClass;
 use Imagick;
-use Exception;
 use Palette\Effect\Colorspace;
 use Palette\Effect\PictureEffect;
 use Palette\Effect\Resize;
@@ -56,12 +56,12 @@ class Picture {
     protected $effect = array();
 
     /**
-     * @var Imagick|resource zdrojová data obrázku
+     * @var Imagick|resource
      */
     private $resource;
 
     /**
-     * @var null|IPictureStorage úložiště upravených obrázků
+     * @var null|IPictureGenerator
      */
     protected $storage = NULL;
 
@@ -72,13 +72,13 @@ class Picture {
 
 
     /**
-     * Palette Picture
-     * @param string $image cesta k obrázku
-     * @param null|IPictureStorage $pictureStorage úložiště upravených obrázků
+     * Picture constructor.
+     * @param $image
+     * @param IPictureGenerator|NULL $pictureStorage
      * @param null $worker
      * @throws Exception
      */
-    public function __construct($image, IPictureStorage $pictureStorage = NULL, $worker = NULL) {
+    public function __construct($image, IPictureGenerator $pictureStorage = NULL, $worker = NULL) {
 
         // PODPORA PRO IMAGE QUERY
         if(strpos($image, '@')) {
@@ -438,15 +438,14 @@ class Picture {
      */
     public function output() {
 
-        $imageFile = $this->storage->getFile($this);
+        $imageFile = $this->storage->getPath($this);
 
         if(file_exists($imageFile)) {
 
             header('Content-Type: image');
             header('Content-Length: ' . filesize($imageFile));
             readfile($imageFile);
-
-            //unlink($imageFile);
+            
             exit;
         }
     }

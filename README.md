@@ -93,7 +93,7 @@ Tyto parametry oddělují pomocí středníku `;`.
 **Příklad:** `files/obrazek.png@Resize;150;;crop`
 
 ### Příklady reálného použití V PHP
-1. Různé možnosti zápisu pro získání url adresy k obrázku zmenšeného na 150 x 120px:
+**1)** Různé možnosti zápisu pro získání url adresy k obrázku zmenšeného na 150 x 120px:
 ```php
 /**
  * @var $palette Palette\Service
@@ -103,14 +103,14 @@ echo $palette->getUrl('image.png@Resize;150;120');
 echo $palette('image.png', 'Resize;150;120');
 echo $palette('image.png@Resize;150;120');
 ```
-2. Zápis složitějšího příkazu v image query:
+**2)** Zápis složitějšího příkazu v image query:
 ```php
 /**
  * @var $palette Palette\Service
  */
 echo $palette->getUrl('image.png', 'Resize;150;120&Rotate;-90&Border;1;1;#ccc');
 ```
-3. Příklad zobrazení miniatury v základním PHP a HTML:
+**3)** Příklad zobrazení miniatury v základním PHP a HTML:
 ```html+php
 <img src='<?=$palette('image.png@Resize;150;120')?>' alt='Resized image' />
 ```

@@ -55,7 +55,7 @@ class Toaster extends PictureEffect {
 
         if(is_float($alpha)) {
 
-            $rectangle->setFillAlpha($alpha);
+            $rectangle->setFillOpacity($alpha);
         }
 
         $dimensions = $image->getImageGeometry();

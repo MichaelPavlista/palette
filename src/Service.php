@@ -26,7 +26,7 @@ class Service {
     /**
      * @var IPictureGenerator
      */
-    protected $storage;
+    protected $generator;
 
 
     /**
@@ -35,7 +35,7 @@ class Service {
      */
     public function __construct(IPictureGenerator $generator)  {
 
-        $this->storage = $generator;
+        $this->generator = $generator;
     }
 
 
@@ -46,7 +46,7 @@ class Service {
      */
     public function __invoke($image) {
 
-        return $this->storage->loadPicture($image)->getUrl();
+        return $this->generator->loadPicture($image)->getUrl();
     }
 
 
@@ -63,7 +63,7 @@ class Service {
             $image .= '@' . $imageQuery;
         }
 
-        return $this->storage->loadPicture($image)->getUrl();
+        return $this->generator->loadPicture($image)->getUrl();
     }
 
 
@@ -74,7 +74,7 @@ class Service {
      */
     public function getPicture($image) {
 
-        return $this->storage->loadPicture($image);
+        return $this->generator->loadPicture($image);
     }
 
 
@@ -82,9 +82,9 @@ class Service {
      * Get Palette generator instance
      * @return IPictureGenerator
      */
-    public function getStorage() {
+    public function getGenerator() {
 
-        return $this->storage;
+        return $this->generator;
     }
 
 
@@ -94,9 +94,9 @@ class Service {
      */
     public function serverResponse() {
 
-        if($this->storage instanceof IServerGenerator) {
+        if($this->generator instanceof IServerGenerator) {
 
-            $this->storage->serverResponse();
+            $this->generator->serverResponse();
         }
     }
 

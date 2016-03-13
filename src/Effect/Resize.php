@@ -91,7 +91,8 @@ class Resize extends PictureEffect {
 
         if($picture->isGd()) {
 
-            $this->resizeGd($picture->getResource());
+            $resource = $this->resizeGd($picture->getResource());
+            $picture->setResource($resource);
         }
         else {
 
@@ -214,8 +215,9 @@ class Resize extends PictureEffect {
     /**
      * Resizing an image using GD
      * @param $resource
+     * @return resource
      */
-    private function resizeGd(&$resource) {
+    private function resizeGd($resource) {
 
         $origWidth  = imagesx($resource);
         $origHeight = imagesy($resource);
@@ -236,7 +238,7 @@ class Resize extends PictureEffect {
                 }
             }
         }
-        elseif($this->resizeMode !== $this::MODE_SCALE) {
+        elseif($this->resizeMode !== $this::MODE_STRETCH) {
 
             if(($origWidth / $origHeight) > ($this->width / $this->height)) {
 
@@ -258,7 +260,7 @@ class Resize extends PictureEffect {
 
         imagecopyresampled($pictureResized, $resource, 0, 0, $resizeX, $resizeY, $this->width, $this->height, $origWidth, $origHeight);
 
-        $resource = $pictureResized;
+        return $pictureResized;
     }
 
 }

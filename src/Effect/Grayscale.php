@@ -34,7 +34,7 @@ class Grayscale extends PictureEffect {
         else {
 
             $picture->getResource()
-                    ->modulateImage(100, 0, 100);
+                ->modulateImage(100, 0, 100);
         }
     }
 

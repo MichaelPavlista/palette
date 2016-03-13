@@ -22,19 +22,43 @@ use Palette\Picture;
 class Blur extends PictureEffect {
 
     /**
+     * @var array effect settings
+     */
+    protected $settings = array(
+
+        'strength' => NULL,
+    );
+
+
+    /**
+     * Blur constructor.
+     * @param int $strength
+     */
+    public function __construct($strength = 2) {
+
+        $this->strength = abs($strength);
+    }
+
+
+    /**
      * Apply effect on picture
      * @param Picture $picture
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        $resource = $picture->getResource();
 
-        for($i = 0; $i < 3; $i++) {
+        if($picture->isGd()) {
 
-            imagefilter($gdResource, IMG_FILTER_GAUSSIAN_BLUR);
+            for($i = 0; $i < $this->strength; $i++) {
+
+                imagefilter($resource, IMG_FILTER_GAUSSIAN_BLUR);
+            }
         }
+        else {
 
-        $picture->setResource($gdResource);
+            $resource->blurImage(1 * $this->strength, 0.45 * $this->strength);
+        }
     }
 
 }

@@ -27,11 +27,18 @@ class Negative extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        if($picture->isGd() || $picture->gdAvailable()) {
 
-        imagefilter($gdResource, IMG_FILTER_NEGATE);
+            $resource = $picture->getResource($picture::WORKER_GD);
 
-        $picture->setResource($gdResource);
+            imagefilter($resource, IMG_FILTER_NEGATE);
+
+            $picture->setResource($resource);
+        }
+        else {
+
+            // NEGATIVE IS NOT SUPPORTED IN IMAGICK
+        }
     }
 
 }

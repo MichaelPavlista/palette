@@ -27,11 +27,24 @@ class EdgeDetect extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        // GD VERSION IS BETTER AND IS PREFERRED
+        if($picture->isGd() || $picture->gdAvailable()) {
 
-        imagefilter($gdResource, IMG_FILTER_EDGEDETECT);
+            $resource = $picture->getResource($picture::WORKER_GD);
 
-        $picture->setResource($gdResource);
+            imagefilter($resource, IMG_FILTER_EDGEDETECT);
+
+            $picture->setResource($resource);
+        }
+        else {
+
+            $resource = $picture->getResource($picture::WORKER_IMAGICK);
+            $resource->convolveImage([
+
+                -1,-1,-1,-1,8,-1,-1,-1,-1
+            ]);
+            $resource->thresholdImage(1);
+        }
     }
 
 }

@@ -1,4 +1,6 @@
 # IntelliJ project files
+vendor
+composer.lock
 .idea
 *.iml
 out

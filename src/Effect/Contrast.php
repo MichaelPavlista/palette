@@ -46,11 +46,21 @@ class Contrast extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        // GD VERSION IS BETTER AND IS PREFERRED
+        if($picture->isGd() || $picture->gdAvailable()) {
 
-        imagefilter($gdResource, IMG_FILTER_CONTRAST, $this->contrast);
+            $resource = $picture->getResource($picture::WORKER_GD);
 
-        $picture->setResource($gdResource);
+            imagefilter($resource, IMG_FILTER_CONTRAST, $this->contrast * -1);
+
+            $picture->setResource($resource);
+        }
+        else {
+
+            $resource = $picture->getResource($picture::WORKER_IMAGICK);
+
+            $resource->sigmoidalContrastImage(FALSE, $this->contrast / 4, 0);
+        }
     }
 
 }

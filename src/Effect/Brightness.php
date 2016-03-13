@@ -46,11 +46,18 @@ class Brightness extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        $resource = $picture->getResource();
 
-        imagefilter($gdResource, IMG_FILTER_BRIGHTNESS, $this->brightness);
+        if($picture->isGd()) {
 
-        $picture->setResource($gdResource);
+            imagefilter($resource, IMG_FILTER_BRIGHTNESS, ceil($this->brightness * 2.55));
+
+            $picture->setResource($resource);
+        }
+        else {
+
+            $resource->modulateImage(100 + $this->brightness, 100, 100);
+        }
     }
 
 }

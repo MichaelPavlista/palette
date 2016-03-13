@@ -28,23 +28,30 @@ class Colorspace extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $image = $picture->getResource(Picture::WORKER_IMAGICK);
+        if($picture->imagickAvailable()) {
 
-        if($image->getImageColorspace() == Imagick::COLORSPACE_CMYK) {
+            $image = $picture->getResource(Picture::WORKER_IMAGICK);
 
-            $profiles = $image->getImageProfiles('*', FALSE);
+            if($image->getImageColorspace() == Imagick::COLORSPACE_CMYK) {
 
-            $path = realpath(__DIR__ . '/../Profiles/') . DIRECTORY_SEPARATOR;
+                $profiles = $image->getImageProfiles('*', FALSE);
 
-            if(array_search('icc', $profiles) === false) {
+                $path = realpath(__DIR__ . '/../Profiles/') . DIRECTORY_SEPARATOR;
 
-                $image->profileImage('icc', file_get_contents($path . 'USWebUncoated.icc'));
+                if(array_search('icc', $profiles) === false) {
+
+                    $image->profileImage('icc', file_get_contents($path . 'USWebUncoated.icc'));
+                }
+
+                $image->profileImage('icc', file_get_contents($path . 'sRGB _Color_Space_Profile.icm'));
             }
 
-            $image->profileImage('icc', file_get_contents($path . 'sRGB _Color_Space_Profile.icm'));
+            $image->stripImage();
         }
+        else {
 
-        $image->stripImage();
+            // COLORSPACE MANAGEMENT NOT AVAILABLE IN GD!
+        }
     }
 
 }

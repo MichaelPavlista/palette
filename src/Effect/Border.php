@@ -52,14 +52,46 @@ class Border extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
+        $resource = $picture->getResource();
+
         if($picture->isGd()) {
 
-        }
-        else {
+            $resize = new Resize(
+
+                imagesx($resource) - $this->width  * 2,
+                imagesy($resource) - $this->height * 2,
+                Resize::MODE_STRETCH
+            );
+
+            $resize->apply($picture);
 
             $resource = $picture->getResource();
 
-            $resize = new Resize($resource->getImageWidth() - $this->width * 2, $resource->getImageHeight() - $this->height * 2, Resize::MODE_STRETCH);
+            $width  = imagesx($resource);
+            $height = imagesy($resource);
+
+            $borderedWidth  = $width  + $this->width * 2;
+            $borderedHeight = $height + $this->height * 2;
+
+            $borderColor = $this->hex2rgb($this->color);
+            $borderColor = imagecolorallocate($resource, $borderColor[0], $borderColor[1], $borderColor[2]);
+
+            $borderedImage = imagecreatetruecolor($borderedWidth, $borderedHeight);
+
+            imagefill($borderedImage, 0, 0, $borderColor);
+            imagecopyresampled($borderedImage, $resource, $this->width, $this->height, 0, 0, $width, $height, $width, $height);
+
+            $picture->setResource($borderedImage);
+        }
+        else {
+
+            $resize = new Resize(
+
+                $resource->getImageWidth()  - $this->width  * 2,
+                $resource->getImageHeight() - $this->height * 2,
+                Resize::MODE_STRETCH
+            );
+
             $resize->apply($picture);
 
             $resource->borderImage($this->color, $this->width, $this->height);

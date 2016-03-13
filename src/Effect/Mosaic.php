@@ -27,12 +27,19 @@ class Mosaic extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        if($picture->isGd() || $picture->gdAvailable()) {
 
-        imagefilter($gdResource, IMG_FILTER_MEAN_REMOVAL);
-        imagefilter($gdResource, IMG_FILTER_CONTRAST, - 50);
+            $resource = $picture->getResource($picture::WORKER_GD);
 
-        $picture->setResource($gdResource);
+            imagefilter($resource, IMG_FILTER_MEAN_REMOVAL);
+            imagefilter($resource, IMG_FILTER_CONTRAST, -50);
+
+            $picture->setResource($resource);
+        }
+        else {
+
+            // MOSAIC IS NOT SUPPORTED IN IMAGICK
+        }
     }
 
 }

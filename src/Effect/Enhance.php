@@ -27,12 +27,19 @@ class Enhance extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        $resource = $picture->getResource();
 
-        imagefilter($gdResource, IMG_FILTER_CONTRAST, - 15);
-        imagefilter($gdResource, IMG_FILTER_BRIGHTNESS, 8);
+        if($picture->isGd()) {
 
-        $picture->setResource($gdResource);
+            imagefilter($resource, IMG_FILTER_CONTRAST, -15);
+            imagefilter($resource, IMG_FILTER_BRIGHTNESS, 8);
+
+            $picture->setResource($resource);
+        }
+        else {
+
+            $resource->modulateImage(108, 170, 100);
+        }
     }
 
 }

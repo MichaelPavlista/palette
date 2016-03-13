@@ -14,6 +14,7 @@
 namespace Palette\Effect;
 
 use Palette\Picture;
+use Imagick;
 
 /**
  * Class Colorize
@@ -46,8 +47,7 @@ class Colorize extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
-
+        // CALCULATE COLORIZE COLOR
         if(strpos($this->color, '#') !== FALSE) {
 
             $color = $this->hex2rgb($this->color);
@@ -57,9 +57,53 @@ class Colorize extends PictureEffect {
             $color = explode(',', $this->color);
         }
 
-        imagefilter($gdResource, IMG_FILTER_COLORIZE, $color[0], $color[1], $color[2]);
+        // GD VERSION IS BETTER AND IS PREFERRED
+        if($picture->isImagick() && !$picture->gdAvailable()) {
 
-        $picture->setResource($gdResource);
+            $resource = $picture->getResource($picture::WORKER_IMAGICK);
+
+            $quantumRange = $resource->getQuantumRange();
+
+            $r = $this->normalizeChannel($color[0]);
+            $g = $this->normalizeChannel($color[1]);
+            $b = $this->normalizeChannel($color[2]);
+
+            $resource->levelImage(0, $r, $quantumRange['quantumRangeLong'], Imagick::CHANNEL_RED);
+            $resource->levelImage(0, $g, $quantumRange['quantumRangeLong'], Imagick::CHANNEL_GREEN);
+            $resource->levelImage(0, $b, $quantumRange['quantumRangeLong'], Imagick::CHANNEL_BLUE);
+        }
+        else {
+
+            $resource = $picture->getResource($picture::WORKER_GD);
+
+            $r = ceil($color[0]);
+            $g = ceil($color[1]);
+            $b = ceil($color[2]);
+
+            imagefilter($resource, IMG_FILTER_COLORIZE, $r, $g, $b);
+
+            $picture->setResource($resource);
+        }
+    }
+
+
+    /**
+     * Normalize color chanel value for imagick
+     * @param $value
+     * @return float
+     */
+    protected function normalizeChannel($value) {
+
+        $value = ceil($value / 2.55);
+
+        if($value > 0) {
+
+            return $value / 5;
+        }
+        else {
+
+            return ($value + 100) / 100;
+        }
     }
 
 }

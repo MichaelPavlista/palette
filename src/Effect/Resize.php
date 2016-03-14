@@ -68,7 +68,7 @@ class Resize extends PictureEffect {
      * @param int $resizeSmaller
      * @param string $color
      */
-    public function __construct($width, $height = NULL, $resizeMode = NULL, $resizeSmaller = 0, $color = '#FFFFFF') {
+    public function __construct($width, $height = NULL, $resizeMode = NULL, $resizeSmaller = 0, $color = NULL) {
 
         if(!$height) {
 
@@ -185,18 +185,9 @@ class Resize extends PictureEffect {
 
             $imagick->scaleImage($this->width, $this->height, TRUE);
 
-            if(strtolower(pathinfo($picture->getImage(), PATHINFO_EXTENSION)) === 'png') {
-
-                $color = 'transparent';
-            }
-            else {
-
-                $color = $this->color;
-            }
-
             $rectangle = new Imagick();
             $rectangle->setFormat('png');
-            $rectangle->newImage($this->width, $this->height, new \ImagickPixel($color));
+            $rectangle->newImage($this->width, $this->height, new \ImagickPixel($this->color ?: 'transparent'));
             $rectangle->compositeImage($imagick, $imagick->getImageCompose(),
 
                 ($rectangle->getImageWidth() - $imagick->getImageWidth()) / 2,
@@ -206,8 +197,8 @@ class Resize extends PictureEffect {
             $picture->setResource($rectangle);
         }
         else {
-            $imagick->scaleImage($this->width, $this->height, TRUE);
 
+            $imagick->scaleImage($this->width, $this->height, TRUE);
         }
     }
 
@@ -238,6 +229,54 @@ class Resize extends PictureEffect {
                 }
             }
         }
+        elseif($this->resizeMode === $this::MODE_FILL) {
+
+            $ratioH = $this->height / $origHeight;
+            $ratioW = $this->width / $origWidth;
+
+            $width  = max($origWidth * $ratioH, $origWidth * $ratioW);
+            $height = max($origHeight * $ratioH, $origHeight * $ratioW);
+            $ratio  = max($width / $origWidth, $height / $origHeight);
+
+            $this->width  = round($origWidth * $ratio);
+            $this->height = round($origHeight * $ratio);
+        }
+        elseif($this->resizeMode === $this::MODE_EXACT) {
+
+            $ratioW = $this->width / $origWidth;
+            $ratioH = $this->height / $origHeight;
+
+            $exactRatio = min($ratioW, $ratioH);
+
+            $resizeWidth  = round($origWidth * $exactRatio);
+            $resizeHeight = round($origHeight * $exactRatio);
+
+            $resizeX = floor(($this->width - $resizeWidth) / 2);
+            $resizeY = floor(($this->height - $resizeHeight) / 2);
+
+            $pictureResized = imagecreatetruecolor($this->width, $this->height);
+
+            imagealphablending($pictureResized, false);
+
+            if(!$this->color || $this->color === 'transparent') {
+
+                $color = imagecolorallocatealpha($pictureResized, 0, 0, 0, 127);
+            }
+            else {
+
+                $rgb = $this->hex2rgb($this->color);
+
+                $color = imagecolorallocate($pictureResized, $rgb[0], $rgb[1], $rgb[2]);
+            }
+
+            imagefill($pictureResized, 0, 0, $color);
+
+            imagesavealpha($pictureResized, true);
+
+            imagecopyresampled($pictureResized, $resource, $resizeX, $resizeY, 0, 0, $resizeWidth, $resizeHeight, $origWidth, $origHeight);
+
+            return $pictureResized;
+        }
         elseif($this->resizeMode !== $this::MODE_STRETCH) {
 
             if(($origWidth / $origHeight) > ($this->width / $this->height)) {
@@ -257,6 +296,8 @@ class Resize extends PictureEffect {
         }
 
         $pictureResized = imagecreatetruecolor($this->width, $this->height);
+
+        imagesavealpha($pictureResized, true);
 
         imagecopyresampled($pictureResized, $resource, 0, 0, $resizeX, $resizeY, $this->width, $this->height, $origWidth, $origHeight);
 

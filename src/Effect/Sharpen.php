@@ -14,6 +14,7 @@
 namespace Palette\Effect;
 
 use Palette\Picture;
+use Imagick;
 
 /**
  * Class Sharpen
@@ -27,18 +28,25 @@ class Sharpen extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        $resource = $picture->getResource();
 
-        $sharpen = array(
+        if($picture->isGd()) {
 
-            array(0.0, -1.0, 0.0),
-            array(-1.0, 5.0, -1.0),
-            array(0.0, -1.0, 0.0),
-        );
+            $sharpen = array(
 
-        imageconvolution($gdResource, $sharpen, array_sum(array_map('array_sum', $sharpen)), 0);
+                array(0.0, -1.0, 0.0),
+                array(-1.0, 5.0, -1.0),
+                array(0.0, -1.0, 0.0),
+            );
 
-        $picture->setResource($gdResource);
+            imageconvolution($resource, $sharpen, array_sum(array_map('array_sum', $sharpen)), 0);
+
+            $picture->setResource($resource);
+        }
+        else {
+
+            $resource->adaptiveSharpenImage(10, 2, Imagick::CHANNEL_ALL);
+        }
     }
 
 }

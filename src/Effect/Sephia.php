@@ -27,12 +27,19 @@ class Sephia extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
-        $gdResource = $picture->getResource(Picture::WORKER_GD);
+        $resource = $picture->getResource();
 
-        imagefilter($gdResource, IMG_FILTER_GRAYSCALE);
-        imagefilter($gdResource, IMG_FILTER_COLORIZE, 100, 50, 0);
+        if($picture->isGd()) {
 
-        $picture->setResource($gdResource);
+            imagefilter($resource, IMG_FILTER_GRAYSCALE);
+            imagefilter($resource, IMG_FILTER_COLORIZE, 100, 60, 0);
+
+            $picture->setResource($resource);
+        }
+        else {
+
+            $resource->sepiaToneImage(80);
+        }
     }
 
 }

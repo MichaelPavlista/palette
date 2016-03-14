@@ -37,7 +37,7 @@ class Rotate extends PictureEffect {
      * @param $degrees
      * @param string $background
      */
-    public function __construct($degrees, $background = '#FFF') {
+    public function __construct($degrees, $background = NULL) {
 
         $this->degrees = $degrees;
         $this->background = $background;
@@ -50,13 +50,31 @@ class Rotate extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
+        $resource = $picture->getResource();
+
         if($picture->isGd()) {
 
+            // IMAGE BACKGROUND COLOR AFTER ROTATION
+            if(!$this->background || $this->background === 'transparent') {
+
+                $color = imagecolorallocatealpha($resource, 0, 0, 0, 127);
+            }
+            else {
+
+                $rgb = $this->hex2rgb($this->background);
+
+                $color = imagecolorallocate($resource, $rgb[0], $rgb[1], $rgb[2]);
+            }
+
+            $resource = imagerotate($resource, -$this->degrees, $color);
+
+            imagesavealpha($resource, true);
+
+            $picture->setResource($resource);
         }
         else {
 
-            $picture->getResource()
-                    ->rotateImage(new ImagickPixel($this->background), $this->degrees);
+            $resource->rotateImage(new ImagickPixel($this->background ?: 'transparent'), $this->degrees);
         }
     }
 

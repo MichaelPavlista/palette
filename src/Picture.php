@@ -322,7 +322,11 @@ class Picture {
                 return imagecreatefromgif($imageFile);
 
             case 'image/png':
-                return imagecreatefrompng($imageFile);
+
+                $pngResource = imagecreatefrompng($imageFile);
+                imagesavealpha($pngResource, true);
+
+                return $pngResource;
         }
 
         throw new Exception('GD resource not supported image extension');
@@ -461,7 +465,7 @@ class Picture {
 
         if($this->isGd()) {
 
-            imagejpeg($this->resource, $file, 100);
+            imagepng($this->resource, $file);
         }
         else {
 

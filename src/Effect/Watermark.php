@@ -69,12 +69,15 @@ class Watermark extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
+        $resource = $picture->getResource();
+
         if($picture->isGd()) {
 
+            $this->watermarkGd($resource);
         }
         else {
 
-            $this->watermarkImagick($picture->getResource());
+            $this->watermarkImagick($resource);
         }
     }
 
@@ -142,6 +145,12 @@ class Watermark extends PictureEffect {
         }
 
         $image->compositeImage($watermark, $watermark->getImageCompose(), $positionX, $positionY);
+    }
+
+
+    protected function watermarkGd($resource) {
+
+
     }
 
 }

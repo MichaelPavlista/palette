@@ -463,13 +463,52 @@ class Picture {
             mkdir($directory, 0777, TRUE);
         }
 
+        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
         if($this->isGd()) {
 
-            imagepng($this->resource, $file);
+            if($extension === 'png') {
+
+                imagepng($this->resource, $file, 9);
+            }
+            elseif($extension === 'gif') {
+
+                imagegif($this->resource, $file);
+            }
+            else {
+
+                $image = $this->resource;
+
+                $width  = imagesx($image);
+                $height = imagesy($image);
+
+                $background = imagecreatetruecolor($width, $height);
+                $whiteColor = imagecolorallocate($background,  255, 255, 255);
+
+                imagefilledrectangle($background, 0, 0, $width, $height, $whiteColor);
+                imagecopy($background, $image, 0, 0, 0, 0, $width, $height);
+                imagejpeg($background, $file, $this->quality);
+            }
         }
         else {
 
-            $this->resource->writeImage($file);
+            if($extension === 'jpg') {
+
+                $background = new Imagick();
+                $background->newImage(
+
+                    $this->resource->getImageWidth(),
+                    $this->resource->getImageHeight(),
+                    '#FFFFFF'
+                );
+                $background->compositeimage($this->resource, Imagick::COMPOSITE_OVER, 0, 0);
+                $background->setImageFormat('jpg');
+                $background->writeImage($file);
+            }
+            else {
+
+                $this->resource->writeImage($file);
+            }
         }
 
         chmod($file, 0777);

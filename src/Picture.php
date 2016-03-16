@@ -473,6 +473,7 @@ class Picture {
             }
             elseif($extension === 'gif') {
 
+                imagesavealpha($this->resource, TRUE);
                 imagegif($this->resource, $file);
             }
             else {

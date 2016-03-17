@@ -7,21 +7,18 @@ use Palette\Picture;
 class EffectTestCase extends Tester\TestCase {
 
 
-
+    /**
+     * @return array
+     */
     public function getEffectArgs() {
 
         return $this->cartesian([
 
-            ['../images/opaque.jpg', '../images/transparent.png'],
-            [Picture::WORKER_GD, Picture::WORKER_IMAGICK],
-            ['jpg', 'png']
+            ['../images/opaque.jpg', '../images/transparent.png', '../images/logo.gif'],
+            [Picture::WORKER_GD, /*Picture::WORKER_IMAGICK*/],
+            ['jpg', 'png', 'gif']
         ]);
     }
-
-
-
-
-
 
 
     /**
@@ -29,11 +26,16 @@ class EffectTestCase extends Tester\TestCase {
      * @param $worker
      * @return Palette\Picture
      */
-    protected function getPicture($path, $worker) {
+    protected function getPicture($path, $worker, $query = '') {
 
         $sourceImage = realpath($path);
 
         Tester\Assert::truthy($sourceImage, 'Image for effect test is missing');
+
+        if($query) {
+
+            $sourceImage .= '@' . $query;
+        }
 
         $picture = new Palette\Picture($sourceImage, NULL, $worker);
 
@@ -46,9 +48,9 @@ class EffectTestCase extends Tester\TestCase {
     protected function compare($testImage, $sourceImage, $worker, $method) {
 
         $compareDir  = realpath('../images/') . DIRECTORY_SEPARATOR;
-        $compareFile = $compareDir . str_replace('::', DIRECTORY_SEPARATOR, strtolower($method)) .
+        $compareFile = $compareDir . $worker . DIRECTORY_SEPARATOR . str_replace('::', DIRECTORY_SEPARATOR, strtolower($method)) .
             '.' . pathinfo($sourceImage, PATHINFO_FILENAME) .
-            '.' . $worker . '.' . pathinfo($testImage, PATHINFO_EXTENSION);
+            '.' . pathinfo($testImage, PATHINFO_EXTENSION);
 
         if(!file_exists($compareFile)) {
 

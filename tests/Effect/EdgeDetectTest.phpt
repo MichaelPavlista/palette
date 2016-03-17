@@ -3,9 +3,9 @@
 require_once 'EffectTestCase.php';
 
 /**
- * Class BlurTest
+ * Class EdgeDetectTest
  */
-class BlurTest extends EffectTestCase {
+class EdgeDetectTest extends EffectTestCase {
 
     /**
      * @param $imagePath
@@ -13,11 +13,11 @@ class BlurTest extends EffectTestCase {
      * @param $extension
      * @dataProvider getEffectArgs
      */
-    public function testBlurValue($imagePath, $worker, $extension) {
+    public function testEdgeDetect($imagePath, $worker, $extension) {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Blur;4');
+        $picture = $this->getPicture($imagePath, $worker, 'EdgeDetect');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);
@@ -25,5 +25,5 @@ class BlurTest extends EffectTestCase {
 
 }
 
-$testCase = new BlurTest();
+$testCase = new EdgeDetectTest();
 $testCase->run();

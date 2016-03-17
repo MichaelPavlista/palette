@@ -67,6 +67,8 @@ class Border extends PictureEffect {
 
             $resource = $picture->getResource();
 
+            imagesavealpha($resource, TRUE);
+
             $width  = imagesx($resource);
             $height = imagesy($resource);
 
@@ -77,8 +79,17 @@ class Border extends PictureEffect {
             $borderColor = imagecolorallocate($resource, $borderColor[0], $borderColor[1], $borderColor[2]);
 
             $borderedImage = imagecreatetruecolor($borderedWidth, $borderedHeight);
+            $transparent = imagecolorallocatealpha($borderedImage, 0, 0, 0, 127);
 
-            imagefill($borderedImage, 0, 0, $borderColor);
+            imagesavealpha($borderedImage, TRUE);
+            imagefill($borderedImage, 0, 0, $transparent);
+
+            // BORDER: TOP x BOTTOM x LEFT x RIGHT
+            imagefilledrectangle($borderedImage, 0, 0, $borderedWidth - 1, $this->height - 1, $borderColor);
+            imagefilledrectangle($borderedImage, 0, $borderedHeight - 1, $borderedWidth - 1, $borderedHeight - $this->height, $borderColor);
+            imagefilledrectangle($borderedImage, 0, 0, $this->width - 1, $borderedHeight - 1, $borderColor);
+            imagefilledrectangle($borderedImage, $borderedWidth - 1, 0, $borderedWidth - $this->width, $borderedHeight - 1, $borderColor);
+
             imagecopyresampled($borderedImage, $resource, $this->width, $this->height, 0, 0, $width, $height, $width, $height);
 
             $picture->setResource($borderedImage);

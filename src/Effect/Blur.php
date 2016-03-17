@@ -50,6 +50,12 @@ class Blur extends PictureEffect {
 
         if($picture->isGd()) {
 
+            // GIF IMAGES HAS PROBLEM WITH THIS FILTER
+            if(strtolower(pathinfo($picture->getImage(), PATHINFO_EXTENSION)) === 'gif') {
+
+                return;
+            }
+
             for($i = 0; $i < $this->strength; $i++) {
 
                 imagefilter($resource, IMG_FILTER_GAUSSIAN_BLUR);

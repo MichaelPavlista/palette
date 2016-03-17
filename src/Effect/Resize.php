@@ -295,7 +295,10 @@ class Resize extends PictureEffect {
             }
         }
 
-        $pictureResized = imagecreatetruecolor($this->width, $this->height);
+        $pictureResized   = imagecreatetruecolor($this->width, $this->height);
+        $transparentColor = imagecolorallocatealpha($pictureResized, 0, 0, 0, 127);
+
+        imagefill($pictureResized, 0, 0, $transparentColor);
 
         imagesavealpha($pictureResized, true);
 

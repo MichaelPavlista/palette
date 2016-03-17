@@ -324,12 +324,39 @@ class Picture {
             case 'image/png':
 
                 $pngResource = imagecreatefrompng($imageFile);
+
                 imagesavealpha($pngResource, true);
 
                 return $pngResource;
         }
 
         throw new Exception('GD resource not supported image extension');
+    }
+
+
+    /**
+     * @param $resource
+     * @return bool
+     */
+    protected function isGdImageTransparent($resource) {
+
+        $width  = imagesx($resource);
+        $height = imagesy($resource);
+
+        for($i = 0; $i < $width; $i++) {
+
+            for($j = 0; $j < $height; $j++) {
+
+                $rgba = imagecolorat($resource, $i, $j);
+
+                if(($rgba & 0x7F000000) >> 24) {
+
+                    return TRUE;
+                }
+            }
+        }
+
+        return FALSE;
     }
 
 
@@ -473,8 +500,32 @@ class Picture {
             }
             elseif($extension === 'gif') {
 
-                imagesavealpha($this->resource, TRUE);
-                imagegif($this->resource, $file);
+                $gifResource = $this->resource;
+
+                if($this->isGdImageTransparent($gifResource)) {
+
+                    $transparentColor = imagecolorallocate($gifResource, 0xfe, 0x3, 0xf4);
+
+                    $height = imagesy($gifResource);
+                    $width  = imagesx($gifResource);
+
+                    for($x = 0; $x < $width; $x++) {
+
+                        for($y = 0; $y < $height; $y++) {
+
+                            $alpha = (imagecolorat($gifResource, $x, $y) & 0x7F000000) >> 24;
+
+                            if($alpha > 3 && ($alpha >= 127 - 3 || /*(rand(0, 127))*/ 70 >= (127 - $alpha))) {
+
+                                imagesetpixel($gifResource, $x, $y, $transparentColor);
+                            }
+                        }
+                    }
+
+                    imagecolortransparent($gifResource, $transparentColor);
+                }
+
+                imagegif($gifResource, $file);
             }
             else {
 

@@ -8,6 +8,8 @@ if(@!include __DIR__ . '/../vendor/autoload.php') {
     exit(1);
 }
 
+require_once 'override/NoImagickPicture.php';
+
 // configure environment
 Tester\Environment::setup();
 date_default_timezone_set('Europe/Prague');

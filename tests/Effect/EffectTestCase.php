@@ -15,7 +15,7 @@ class EffectTestCase extends Tester\TestCase {
         return $this->cartesian([
 
             ['../images/opaque.jpg', '../images/transparent.png', '../images/logo.gif'],
-            [Picture::WORKER_GD, /*Picture::WORKER_IMAGICK*/],
+            [Picture::WORKER_GD, Picture::WORKER_IMAGICK],
             ['jpg', 'png', 'gif']
         ]);
     }
@@ -37,7 +37,14 @@ class EffectTestCase extends Tester\TestCase {
             $sourceImage .= '@' . $query;
         }
 
-        $picture = new Palette\Picture($sourceImage, NULL, $worker);
+        if($worker === Picture::WORKER_GD) {
+
+            $picture = new NoImagickPicture($sourceImage, NULL, $worker);
+        }
+        else {
+
+            $picture = new Palette\Picture($sourceImage, NULL, $worker);
+        }
 
         return $picture;
     }

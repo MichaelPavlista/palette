@@ -139,6 +139,9 @@ class Picture {
     }
 
 
+
+
+
     /**
      * Is PHP extension Imagick available?
      * @return bool

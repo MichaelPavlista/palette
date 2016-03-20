@@ -96,6 +96,9 @@ class Border extends PictureEffect {
         }
         else {
 
+            $width  = $resource->getImageWidth();
+            $height = $resource->getImageHeight();
+
             $resize = new Resize(
 
                 $resource->getImageWidth()  - $this->width  * 2,
@@ -105,7 +108,22 @@ class Border extends PictureEffect {
 
             $resize->apply($picture);
 
-            $resource->borderImage($this->color, $this->width, $this->height);
+            $borderedImage = new \Imagick();
+            $borderedImage->setFormat('png');
+            $borderedImage->newImage($width, $height, new \ImagickPixel('transparent'));
+
+            // BORDER: TOP x BOTTOM x LEFT x RIGHT
+            $border = new \ImagickDraw();
+            $border->setFillColor(new \ImagickPixel($this->color));
+            $border->rectangle(0, 0, $width - 1, $this->height - 1);
+            $border->rectangle(0, $height - $this->height, $width - 1, $height - 1);
+            $border->rectangle(0, 0, $this->width - 1, $height - 1);
+            $border->rectangle($width - $this->width, 0, $width - 1, $height - 1);
+
+            $borderedImage->compositeImage($resource, $resource->getImageCompose(), $this->height, $this->width);
+            $borderedImage->drawImage($border);
+
+            $picture->setResource($borderedImage);
         }
     }
 

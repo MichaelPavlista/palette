@@ -107,7 +107,7 @@ class Opacity extends PictureEffect {
         }
         else {
 
-            $resource->setImageOpacity($this->opacity);
+            $resource->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $this->opacity, \Imagick::CHANNEL_ALPHA);
         }
     }
     

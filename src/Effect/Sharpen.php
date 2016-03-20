@@ -45,7 +45,9 @@ class Sharpen extends PictureEffect {
         }
         else {
 
-            $resource->adaptiveSharpenImage(10, 2, Imagick::CHANNEL_ALL);
+            $resource->adaptiveSharpenImage(10, 2, Imagick::CHANNEL_RED);
+            $resource->adaptiveSharpenImage(10, 2, Imagick::CHANNEL_GREEN);
+            $resource->adaptiveSharpenImage(10, 2, Imagick::CHANNEL_BLUE);
         }
     }
 

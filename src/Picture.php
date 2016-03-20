@@ -560,6 +560,49 @@ class Picture {
                 $background->setImageFormat('jpg');
                 $background->writeImage($file);
             }
+            elseif($extension === 'gif') {
+
+                $validAlpha = 0.25;
+                $visiblePixels = 0;
+                $iterator = $this->resource->getPixelIterator();
+
+                /**
+                 * @var $pixel \ImagickPixel
+                 */
+                foreach($iterator as $row => $pixels) {
+
+                    foreach ($pixels as $col => $pixel) {
+
+                        $color = $pixel->getColor(TRUE);
+
+                        if($color['a'] >= $validAlpha) {
+
+                            $visiblePixels++;
+                        }
+                    }
+
+                    $iterator->syncIterator();
+                }
+
+                if(!$visiblePixels) {
+
+                    $validAlpha = 0;
+                }
+
+                // SAVE NEW ALPHA COLOR VALUE
+                foreach($iterator as $row => $pixels) {
+
+                    foreach ($pixels as $col => $pixel) {
+
+                        $color = $pixel->getColor(TRUE);
+                        $pixel->setColorValue(Imagick::COLOR_ALPHA, $color['a'] >= $validAlpha ? 1 : 0);
+                    }
+
+                    $iterator->syncIterator();
+                }
+
+                $this->resource->writeImage($file);
+            }
             else {
 
                 $this->resource->writeImage($file);

@@ -21,6 +21,5 @@ define('TEMP_DIR', __DIR__ . '/tmp/' . lcg_value());
 register_shutdown_function(function () {
 
     Tester\Helpers::purge(TEMP_DIR);
-
     rmdir(TEMP_DIR);
 });

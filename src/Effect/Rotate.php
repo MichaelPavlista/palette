@@ -14,6 +14,7 @@
 namespace Palette\Effect;
 
 use Palette\Picture;
+use Imagick;
 use ImagickPixel;
 
 /**
@@ -87,7 +88,24 @@ class Rotate extends PictureEffect {
         }
         else {
 
-            $resource->rotateImage(new ImagickPixel($this->background ?: 'transparent'), $this->degrees);
+            $resource->rotateImage(new ImagickPixel('transparent'), $this->degrees);
+
+            // ADD IMAGE BACKGROUND COLOR AFTER ROTATION (rotateImage is bugged)
+            if($this->background && $this->background !== 'transparent') {
+
+                $background = new Imagick();
+                $background->setFormat('png');
+                $background->newImage(
+
+                    $resource->getImageWidth(),
+                    $resource->getImageHeight(),
+                    new ImagickPixel($this->background)
+                );
+
+                $background->compositeImage($resource, $resource->getImageCompose(), 0, 0);
+
+                $picture->setResource($background);
+            }
         }
     }
 

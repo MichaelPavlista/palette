@@ -163,8 +163,8 @@ class Resize extends PictureEffect {
         }
 
         if($this->resizeMode === $this::MODE_CROP) {
-            $imagick->cropThumbnailImage($this->width, $this->height);
 
+            $imagick->cropThumbnailImage($this->width, $this->height);
         }
         elseif($this->resizeMode === $this::MODE_FILL) {
 
@@ -212,24 +212,16 @@ class Resize extends PictureEffect {
 
         $origWidth  = imagesx($resource);
         $origHeight = imagesy($resource);
-        $resizeX    = 0;
-        $resizeY    = 0;
 
-        if($this->resizeMode === $this::MODE_FIT) {
+        if(!$this->resizeSmaller && $this->height > $origHeight && $this->width > $origWidth) {
 
-            if($origWidth > $this->width || $origHeight > $this->height) {
-
-                if($origWidth > $origHeight) {
-
-                    $this->height = floor(($origHeight / $origWidth) * $this->width);
-                }
-                elseif($origWidth < $origHeight) {
-
-                    $this->width = floor(($origWidth / $origHeight) * $this->height);
-                }
-            }
+            return $resource;
         }
-        elseif($this->resizeMode === $this::MODE_FILL) {
+
+        $resizeX = 0;
+        $resizeY = 0;
+
+        if($this->resizeMode === $this::MODE_FILL) {
 
             $ratioH = $this->height / $origHeight;
             $ratioW = $this->width / $origWidth;
@@ -277,7 +269,7 @@ class Resize extends PictureEffect {
 
             return $pictureResized;
         }
-        elseif($this->resizeMode !== $this::MODE_STRETCH) {
+        elseif($this->resizeMode === $this::MODE_CROP) {
 
             if(($origWidth / $origHeight) > ($this->width / $this->height)) {
 
@@ -293,6 +285,17 @@ class Resize extends PictureEffect {
                 $resizeY = ($origHeight - $heightTmp) / 2;
                 $origHeight = $heightTmp;
             }
+        }
+        // DEFAULT RESIZE METHOD FIT
+        elseif($this->resizeMode !== $this::MODE_STRETCH) {
+
+            $widthRatio  = $origWidth / $this->width;
+            $heightRatio = $origHeight / $this->height;
+
+            $resizeRatio = max($widthRatio, $heightRatio);
+
+            $this->width  = floor($origWidth / $resizeRatio);
+            $this->height = floor($origHeight / $resizeRatio);
         }
 
         $pictureResized   = imagecreatetruecolor($this->width, $this->height);

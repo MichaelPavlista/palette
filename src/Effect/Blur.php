@@ -60,6 +60,8 @@ class Blur extends PictureEffect {
 
                 imagefilter($resource, IMG_FILTER_GAUSSIAN_BLUR);
             }
+
+            $picture->setResource($resource);
         }
         else {
 

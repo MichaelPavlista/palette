@@ -90,25 +90,37 @@ class Watermark extends PictureEffect {
      */
     private function applyWatermarkImagick(Imagick $image) {
 
-        $watermark = new Imagick($this->watermark);
-        $watermark->evaluateImage(Imagick::EVALUATE_MULTIPLY, $this->opacity, Imagick::CHANNEL_ALPHA);
+        $pictureWidth  = $image->getImageWidth();
+        $pictureHeight = $image->getImageHeight();
+
+        $watermarkPicture = new Picture($this->watermark, NULL, Picture::WORKER_IMAGICK);
+
+        $opacity = new Opacity($this->opacity);
+        $opacity->apply($watermarkPicture);
 
         if($this->size) {
 
-            $watermark->scaleImage(
-                $image->getImageWidth() / 100 * $this->size,
-                $image->getImageHeight() / 100 * $this->size,
-                TRUE
+            $resize = new Resize(
+                $pictureWidth / 100 * $this->size,
+                $pictureHeight / 100 * $this->size,
+                Resize::MODE_FIT
             );
+
+            $resize->apply($watermarkPicture);
         }
+
+        $watermark = $watermarkPicture->getResource(Picture::WORKER_IMAGICK);
+
+        $watermarkWidth  = $watermark->getImageWidth();
+        $watermarkHeight = $watermark->getImageHeight();
 
         switch($this->position) {
 
             case 'repeat':
 
-                for($w = 0; $w < $image->getImageWidth(); $w += $watermark->getImageWidth() + $this->space) {
+                for($w = 0; $w < $pictureWidth; $w += $watermarkWidth + $this->space) {
 
-                    for($h = 0; $h < $image->getImageHeight(); $h += $watermark->getImageHeight() + $this->space) {
+                    for($h = 0; $h < $pictureHeight; $h += $watermarkHeight + $this->space) {
 
                         $image->compositeImage($watermark, $watermark->getImageCompose(), $w, $h);
                     }
@@ -167,6 +179,17 @@ class Watermark extends PictureEffect {
 
         $opacity = new Opacity($this->opacity);
         $opacity->apply($watermarkPicture);
+
+        if($this->size) {
+
+            $resize = new Resize(
+                $pictureWidth / 100 * $this->size,
+                $pictureHeight / 100 * $this->size,
+                Resize::MODE_FIT
+            );
+
+            $resize->apply($watermarkPicture);
+        }
 
         $watermark = $watermarkPicture->getResource($watermarkPicture::WORKER_GD);
 

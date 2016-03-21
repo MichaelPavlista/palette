@@ -6,7 +6,6 @@ use Palette\Picture;
 
 class EffectTestCase extends Tester\TestCase {
 
-
     /**
      * @return array
      */
@@ -50,8 +49,13 @@ class EffectTestCase extends Tester\TestCase {
     }
 
 
-
-
+    /**
+     * @param $testImage
+     * @param $sourceImage
+     * @param $worker
+     * @param $method
+     * @throws \Tester\TestCaseException
+     */
     protected function compare($testImage, $sourceImage, $worker, $method) {
 
         $compareDir  = realpath('../images/') . DIRECTORY_SEPARATOR;
@@ -79,8 +83,6 @@ class EffectTestCase extends Tester\TestCase {
     }
 
 
-
-
     /**
      * @param $extension
      * @return string
@@ -89,8 +91,6 @@ class EffectTestCase extends Tester\TestCase {
 
         return TEMP_DIR . DIRECTORY_SEPARATOR . sha1(uniqid('', TRUE)) . '.' . $extension;
     }
-
-
 
 
     /**

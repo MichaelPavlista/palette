@@ -46,11 +46,11 @@ class WatermarkTest extends EffectTestCase {
      * @param $extension
      * @dataProvider getEffectArgs
      */
-    public function testWatermarkRepeatSpaced($imagePath, $worker, $extension) {
+    public function testWatermarkAdvanced($imagePath, $worker, $extension) {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;repeat;1;;20');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.large.png;repeat;0.65;33;5,10');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);

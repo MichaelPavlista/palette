@@ -306,6 +306,39 @@ class Picture {
 
 
     /**
+     * @param $resource
+     * @return resource
+     */
+    protected function normalizeGdResource($resource) {
+
+        if(imageistruecolor($resource)) {
+
+            imagesavealpha($resource, TRUE);
+
+            return $resource;
+        }
+
+        $width  = imagesx($resource);
+        $height = imagesy($resource);
+
+        $trueColor = imagecreatetruecolor($width, $height);
+        imagealphablending($trueColor, FALSE);
+
+        $transparent = imagecolorallocatealpha($trueColor, 255, 255, 255, 127);
+
+        imagefilledrectangle($trueColor, 0, 0, $width, $height, $transparent);
+        imagealphablending($trueColor, TRUE);
+
+        imagecopy($trueColor, $resource, 0, 0, 0, 0, $width, $height);
+        imagedestroy($resource);
+
+        imagesavealpha($trueColor, TRUE);
+
+        return $trueColor;
+    }
+
+
+    /**
      * Creating a resource of GD image file
      * @param string $imageFile image file path
      * @return resource
@@ -319,18 +352,13 @@ class Picture {
 
             case 'image/jpg':
             case 'image/jpeg':
-                return imagecreatefromjpeg($imageFile);
+                return $this->normalizeGdResource(imagecreatefromjpeg($imageFile));
 
             case 'image/gif':
-                return imagecreatefromgif($imageFile);
+                return $this->normalizeGdResource(imagecreatefromgif($imageFile));
 
             case 'image/png':
-
-                $pngResource = imagecreatefrompng($imageFile);
-
-                imagesavealpha($pngResource, true);
-
-                return $pngResource;
+                return $this->normalizeGdResource(imagecreatefrompng($imageFile));
         }
 
         throw new Exception('GD resource not supported image extension');
@@ -475,8 +503,8 @@ class Picture {
         $this->loadImageResource();
 
         // SUPPORT FOR CMYK IMAGES
-        $colorSpace = new Colorspace();
-        $colorSpace->apply($this);
+        //$colorSpace = new Colorspace();
+        //$colorSpace->apply($this);
 
         // APPLY EFFECT ON IMAGE
         foreach($this->effect as $effect) {
@@ -562,7 +590,7 @@ class Picture {
             }
             elseif($extension === 'gif') {
 
-                $validAlpha = 0.25;
+                $validAlpha = 0.333;
                 $visiblePixels = 0;
                 $iterator = $this->resource->getPixelIterator();
 

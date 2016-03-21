@@ -50,7 +50,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;repeat;1;20');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;repeat;1;;20');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);

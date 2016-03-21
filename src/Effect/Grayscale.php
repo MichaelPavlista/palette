@@ -27,14 +27,17 @@ class Grayscale extends PictureEffect {
      */
     public function apply(Picture $picture) {
 
+        $resource = $picture->getResource();
+
         if($picture->isGd()) {
 
-            imagefilter($picture->getResource(), IMG_FILTER_GRAYSCALE);
+            imagefilter($resource, IMG_FILTER_GRAYSCALE);
+
+            $picture->setResource($resource);
         }
         else {
 
-            $picture->getResource()
-                ->modulateImage(100, 0, 100);
+            $resource->modulateImage(100, 0, 100);
         }
     }
 

@@ -248,7 +248,7 @@ class Resize extends PictureEffect {
 
             $pictureResized = imagecreatetruecolor($this->width, $this->height);
 
-            imagealphablending($pictureResized, false);
+            imagealphablending($pictureResized, TRUE);
 
             if(!$this->color || $this->color === 'transparent') {
 

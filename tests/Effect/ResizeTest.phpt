@@ -135,7 +135,7 @@ class ResizeTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Resize;70;70;exact;#2b45e1');
+        $picture = $this->getPicture($imagePath, $worker, 'Resize;70;70;exact;1;#2b45e1');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);

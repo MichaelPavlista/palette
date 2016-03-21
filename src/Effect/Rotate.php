@@ -54,21 +54,34 @@ class Rotate extends PictureEffect {
 
         if($picture->isGd()) {
 
-            // IMAGE BACKGROUND COLOR AFTER ROTATION
-            if(!$this->background || $this->background === 'transparent') {
+            $transparentColor = imagecolorallocatealpha($resource, 0, 0, 0, 127);
 
-                $color = imagecolorallocatealpha($resource, 0, 0, 0, 127);
-            }
-            else {
-
-                $rgb = $this->hex2rgb($this->background);
-
-                $color = imagecolorallocate($resource, $rgb[0], $rgb[1], $rgb[2]);
-            }
-
-            $resource = imagerotate($resource, -$this->degrees, $color);
+            $resource = imagerotate($resource, -$this->degrees, $transparentColor);
 
             imagesavealpha($resource, true);
+
+            // ADD IMAGE BACKGROUND COLOR AFTER ROTATION
+            if($this->background && $this->background !== 'transparent') {
+
+                $rgb   = $this->hex2rgb($this->background);
+                $color = imagecolorallocate($resource, $rgb[0], $rgb[1], $rgb[2]);
+
+                $width  = imagesx($resource);
+                $height = imagesy($resource);
+
+                $backgroundImage = imagecreatetruecolor($width, $height);
+
+                imagefill($backgroundImage, 0, 0, $color);
+
+                imagesavealpha($backgroundImage, TRUE);
+
+                imagecopy($backgroundImage, $resource, 0, 0, 0, 0, $width, $height);
+
+                imagedestroy($resource);
+
+                $picture->setResource($backgroundImage);
+                return;
+            }
 
             $picture->setResource($resource);
         }

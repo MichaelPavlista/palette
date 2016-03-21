@@ -51,7 +51,24 @@ class RotateTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Rotate;30;#2b45e1');
+        $picture = $this->getPicture($imagePath, $worker, 'Rotate;30;#ccc');
+        $picture->save($tempFile);
+
+        $this->compare($tempFile, $imagePath, $worker, __METHOD__);
+    }
+
+
+    /**
+     * @param $imagePath
+     * @param $worker
+     * @param $extension
+     * @dataProvider getEffectArgs
+     */
+    public function testRotateTransparent($imagePath, $worker, $extension) {
+
+        $tempFile = $this->tempFile($extension);
+
+        $picture = $this->getPicture($imagePath, $worker, 'Rotate;-30');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);

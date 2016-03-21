@@ -535,20 +535,57 @@ class Picture {
 
                 if($this->isGdImageTransparent($gifResource)) {
 
-                    $transparentColor = imagecolorallocate($gifResource, 0xfe, 0x3, 0xf4);
+                    $validAlpha = ceil(0.333 * 127);
+                    $visiblePixels = 0;
 
                     $height = imagesy($gifResource);
                     $width  = imagesx($gifResource);
+
+                    $transparentColor = imagecolorallocate($gifResource, 0xfe, 0x3, 0xf4);
+
+                    // FIX GIF IMAGE OPACITY
+                    for($x = 0; $x < $width; $x++) {
+
+                        for($y = 0; $y < $height; $y++) {
+
+                            $pixelIndex = imagecolorat($gifResource, $x, $y);
+                            $pixelColor = imagecolorsforindex($gifResource, $pixelIndex);
+
+                            if($pixelColor['alpha'] <= $validAlpha) {
+
+                                $visiblePixels++;
+                            }
+                        }
+                    }
+
+                    if(!$visiblePixels) {
+
+                        $validAlpha = 127;
+                    }
 
                     for($x = 0; $x < $width; $x++) {
 
                         for($y = 0; $y < $height; $y++) {
 
-                            $alpha = (imagecolorat($gifResource, $x, $y) & 0x7F000000) >> 24;
+                            $pixelIndex = imagecolorat($gifResource, $x, $y);
+                            $pixelColor = imagecolorsforindex($gifResource, $pixelIndex);
 
-                            if($alpha > 3 && ($alpha >= 127 - 3 || /*(rand(0, 127))*/ 70 >= (127 - $alpha))) {
+                            if($pixelColor['alpha'] >= $validAlpha) {
 
                                 imagesetpixel($gifResource, $x, $y, $transparentColor);
+                            }
+                            else {
+
+                                $visiblePixel = imagecolorallocatealpha(
+
+                                    $gifResource,
+                                    $pixelColor['red'],
+                                    $pixelColor['green'],
+                                    $pixelColor['blue'],
+                                    0
+                                );
+
+                                imagesetpixel($gifResource, $x, $y, $visiblePixel);
                             }
                         }
                     }

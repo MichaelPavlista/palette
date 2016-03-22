@@ -39,10 +39,10 @@ class EdgeDetect extends PictureEffect {
         else {
 
             $resource = $picture->getResource($picture::WORKER_IMAGICK);
-            $resource->convolveImage([
+            $resource->convolveImage(array(
 
                 -1,-1,-1,-1,8,-1,-1,-1,-1
-            ]);
+            ));
             $resource->thresholdImage(1);
         }
     }

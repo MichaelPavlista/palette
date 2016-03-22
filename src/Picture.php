@@ -303,6 +303,7 @@ class Picture {
 
 
     /**
+     * Normalize GD resource
      * @param $resource
      * @return resource
      */

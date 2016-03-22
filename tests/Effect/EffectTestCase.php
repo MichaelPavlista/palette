@@ -1,9 +1,23 @@
 <?php
 
+/**
+ * This file is part of the Palette (https://github.com/MichaelPavlista/palette)
+ * Copyright (c) 2016 Michael Pavlista (http://www.pavlista.cz/)
+ *
+ * @author Michael Pavlista
+ * @email  michael@pavlista.cz
+ * @link   http://pavlista.cz/
+ * @link   https://www.facebook.com/MichaelPavlista
+ * @copyright 2016
+ */
+
 require_once '../bootstrap.php';
 
 use Palette\Picture;
 
+/**
+ * Class EffectTestCase
+ */
 class EffectTestCase extends Tester\TestCase {
 
     /**
@@ -61,7 +75,7 @@ class EffectTestCase extends Tester\TestCase {
      */
     protected function compare($testImage, $sourceImage, $worker, $method) {
 
-        $compareDir  = realpath('../images/') . DIRECTORY_SEPARATOR;
+        $compareDir  = realpath('../bin/worker/') . DIRECTORY_SEPARATOR;
         $compareFile = $compareDir . $worker . DIRECTORY_SEPARATOR . str_replace('::', DIRECTORY_SEPARATOR, strtolower($method)) .
             '.' . pathinfo($sourceImage, PATHINFO_FILENAME) .
             '.' . pathinfo($testImage, PATHINFO_EXTENSION);
@@ -71,6 +85,11 @@ class EffectTestCase extends Tester\TestCase {
             @mkdir(pathinfo($compareFile, PATHINFO_DIRNAME), 0777, TRUE);
 
             rename($testImage, $compareFile);
+
+            if(!file_exists($compareFile)) {
+
+                throw new Tester\TestCaseException('Generating effect test image failed');
+            }
         }
         else {
 
@@ -78,7 +97,7 @@ class EffectTestCase extends Tester\TestCase {
 
             if(!$compare->isEqual()) {
 
-                throw new Tester\TestCaseException('Not the same');
+                throw new Tester\TestCaseException('Image is not the same');
             }
         }
     }

@@ -42,15 +42,6 @@ abstract class PictureEffect {
     }
 
 
-
-    public function output($resource) {
-
-        header('Content-Type: image/png');
-        imagepng($resource);
-        exit;
-    }
-
-
     /**
      * Restore effect state from array
      * @param array $settings

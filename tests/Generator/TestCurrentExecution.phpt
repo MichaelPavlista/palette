@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * This file is part of the Palette (https://github.com/MichaelPavlista/palette)
+ * Copyright (c) 2016 Michael Pavlista (http://www.pavlista.cz/)
+ *
+ * @author Michael Pavlista
+ * @email  michael@pavlista.cz
+ * @link   http://pavlista.cz/
+ * @link   https://www.facebook.com/MichaelPavlista
+ * @copyright 2016
+ */
+
 require_once '../bootstrap.php';
 
 use Tester\Assert;
@@ -17,7 +28,7 @@ class TestCurrentExecution extends Tester\TestCase {
 
         $testFile = TEMP_DIR . DIRECTORY_SEPARATOR . 'opaque.jpg';
 
-        copy('../images/opaque.jpg', $testFile);
+        copy('../bin/worker/opaque.jpg', $testFile);
 
         if(!file_exists($testFile)) {
 

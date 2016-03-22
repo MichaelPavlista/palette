@@ -158,7 +158,7 @@ class CurrentExecution implements IPictureGenerator {
      * @param Picture $picture
      * @return string
      */
-    protected function getFileName(Picture $picture) {
+    public function getFileName(Picture $picture) {
 
         $imageFile = $picture->getImage();
 

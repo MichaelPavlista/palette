@@ -7,20 +7,22 @@ use Palette\Picture;
 class EffectTestCase extends Tester\TestCase {
 
     /**
+     * Data provider for palette effect tests
      * @return array
      */
     public function getEffectArgs() {
 
-        return $this->cartesian([
+        return $this->cartesian(array(
 
-            ['../images/opaque.jpg', '../images/transparent.png', '../images/logo.gif'],
-            [Picture::WORKER_GD, Picture::WORKER_IMAGICK],
-            ['jpg', 'png', 'gif']
-        ]);
+            array('../bin/worker/opaque.jpg', '../bin/worker/transparent.png', '../bin/worker/logo.gif'),
+            array(Picture::WORKER_GD, Picture::WORKER_IMAGICK),
+            array('jpg', 'png', 'gif')
+        ));
     }
 
 
     /**
+     * Get palette image instance for effect testing
      * @param $path
      * @param $worker
      * @return Palette\Picture
@@ -50,11 +52,12 @@ class EffectTestCase extends Tester\TestCase {
 
 
     /**
+     * Compare two images for specified method and worker
      * @param $testImage
      * @param $sourceImage
      * @param $worker
      * @param $method
-     * @throws \Tester\TestCaseException
+     * @throws Tester\TestCaseException
      */
     protected function compare($testImage, $sourceImage, $worker, $method) {
 
@@ -68,8 +71,6 @@ class EffectTestCase extends Tester\TestCase {
             @mkdir(pathinfo($compareFile, PATHINFO_DIRNAME), 0777, TRUE);
 
             rename($testImage, $compareFile);
-
-            //Tester\Environment::skip('Test requires image to compare. Image has been generated.');
         }
         else {
 
@@ -84,6 +85,7 @@ class EffectTestCase extends Tester\TestCase {
 
 
     /**
+     * Get new temp image path
      * @param $extension
      * @return string
      */
@@ -94,13 +96,14 @@ class EffectTestCase extends Tester\TestCase {
 
 
     /**
+     * Generate cartesian values sum
      * @param array $input
      * @return array
      */
     protected function cartesian(array $input) {
 
         $input  = array_filter($input);
-        $result = [[]];
+        $result = array(array());
 
         foreach($input as $key => $values) {
 

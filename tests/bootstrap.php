@@ -8,7 +8,7 @@ if(@!include __DIR__ . '/../vendor/autoload.php') {
     exit(1);
 }
 
-require_once 'override/NoImagickPicture.php';
+require_once 'bin/NoImagickPicture.php';
 
 // configure environment
 Tester\Environment::setup();

@@ -10,16 +10,17 @@ use Palette\Picture;
 class ResizeTest extends EffectTestCase {
 
     /**
+     * Data provider for resize tests
      * @return array
      */
     public function getEffectArgs() {
 
-        return $this->cartesian([
+        return $this->cartesian(array(
 
-            ['../images/opaque.jpg', '../images/transparent.png', '../images/panorama.jpg', '../images/logo.gif'],
-            [Picture::WORKER_GD, Picture::WORKER_IMAGICK],
-            ['jpg', 'png', 'gif']
-        ]);
+            array('../bin/worker/opaque.jpg', '../bin/worker/transparent.png', '../bin/worker/panorama.jpg', '../bin/worker/logo.gif'),
+            array(Picture::WORKER_GD, Picture::WORKER_IMAGICK),
+            array('jpg', 'png', 'gif')
+        ));
     }
 
 

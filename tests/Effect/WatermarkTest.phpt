@@ -10,16 +10,17 @@ use Palette\Picture;
 class WatermarkTest extends EffectTestCase {
 
     /**
+     * Data provider for watermark tests
      * @return array
      */
     public function getEffectArgs() {
 
-        return $this->cartesian([
+        return $this->cartesian(array(
 
-            ['../images/opaque.jpg'],
-            [Picture::WORKER_GD, Picture::WORKER_IMAGICK],
-            ['jpg', 'png', 'gif']
-        ]);
+            array('../bin/worker/opaque.jpg'),
+            array(Picture::WORKER_GD, Picture::WORKER_IMAGICK),
+            array('jpg', 'png', 'gif')
+        ));
     }
 
 
@@ -33,7 +34,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;repeat');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../bin/worker/watermark.png;repeat');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);
@@ -50,7 +51,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.large.png;repeat;0.65;33;5,10');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../bin/worker/watermark.large.png;repeat;0.65;33;5,10');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);
@@ -67,7 +68,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;center');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../bin/worker/watermark.png;center');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);
@@ -84,7 +85,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;topRight');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../bin/worker/watermark.png;topRight');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);
@@ -101,7 +102,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;topLeft');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../bin/worker/watermark.png;topLeft');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);
@@ -118,7 +119,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;bottomRight');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../bin/worker/watermark.png;bottomRight');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);
@@ -135,7 +136,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;bottomLeft');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../bin/worker/watermark.png;bottomLeft');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);
@@ -152,7 +153,7 @@ class WatermarkTest extends EffectTestCase {
 
         $tempFile = $this->tempFile($extension);
 
-        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../images/watermark.png;center;0.9');
+        $picture = $this->getPicture($imagePath, $worker, 'Watermark;../bin/worker/watermark.png;center;0.9');
         $picture->save($tempFile);
 
         $this->compare($tempFile, $imagePath, $worker, __METHOD__);

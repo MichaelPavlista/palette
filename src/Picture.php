@@ -139,9 +139,6 @@ class Picture {
     }
 
 
-
-
-
     /**
      * Is PHP extension Imagick available?
      * @return bool
@@ -503,8 +500,8 @@ class Picture {
         $this->loadImageResource();
 
         // SUPPORT FOR CMYK IMAGES
-        //$colorSpace = new Colorspace();
-        //$colorSpace->apply($this);
+        $colorSpace = new Colorspace();
+        $colorSpace->apply($this);
 
         // APPLY EFFECT ON IMAGE
         foreach($this->effect as $effect) {

@@ -1,5 +1,8 @@
 <?php
 
+set_time_limit(600);
+ini_set('memory_limit','1024M');
+
 // The Nette Tester command-line runner can be
 // invoked through the command: ../vendor/bin/tester .
 $devPath  = realpath('../../vendor/autoload.php');

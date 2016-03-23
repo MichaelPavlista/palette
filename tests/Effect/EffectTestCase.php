@@ -126,7 +126,7 @@ class EffectTestCase extends Tester\TestCase {
 
         foreach($input as $key => $values) {
 
-            $append = [];
+            $append = array();
 
             foreach($result as $product) {
 

@@ -2,7 +2,12 @@
 
 // The Nette Tester command-line runner can be
 // invoked through the command: ../vendor/bin/tester .
-if(@!include __DIR__ . '/../vendor/autoload.php' && @!include __DIR__ . '/../../vendor/autoload.php') {
+$devPath  = realpath('../../vendor/autoload.php');
+$livePath = realpath(__DIR__ . '/../../../autoload.php');
+
+$autoloaderPath = $livePath ?: $devPath;
+
+if(!@include $autoloaderPath) {
 
     echo 'Install Nette Tester using `composer install`';
     exit(1);

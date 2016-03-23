@@ -80,12 +80,6 @@ class Picture {
      */
     public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL) {
 
-        // SOLVE IMAGICK SEGMENTATION FAULT BUG
-        if($this->imagickAvailable()) {
-
-            $this->fixImagickSegmentationFault();
-        }
-
         // SUPPORT FOR PALETTE IMAGE QUERY
         if(strpos($image, '@')) {
 
@@ -136,23 +130,18 @@ class Picture {
 
 
     /**
-     * Solve Imagick segmentation fault bug
+     * Create safe imagick instance, solve Imagick segmentation fault bug
      * https://bugs.php.net/bug.php?id=61122
-     * @param null|bool $setFixed
+     * @param mixed $files The path to an image to load or an array of paths. Paths can include
+     * wildcards for file names, or can be URLs.
+     * @return Imagick
      */
-    protected function fixImagickSegmentationFault($setFixed = NULL) {
+    public function createImagick($files = NULL) {
 
-        static $isFixed;
+        $imagick = new Imagick($files);
+        $imagick->setResourceLimit(6, 1);
 
-        if(!is_null($setFixed)) {
-
-            $isFixed = $setFixed;
-        }
-
-        if(!$isFixed) {
-
-            $isFixed = Imagick::setResourceLimit(6, 1);
-        }
+        return $imagick;
     }
 
 
@@ -196,7 +185,7 @@ class Picture {
 
             if((is_null($this->worker) || $this->worker === $this::WORKER_IMAGICK) && $this->imagickAvailable()) {
 
-                $this->resource = new Imagick($this->image);
+                $this->resource = $this->createImagick($this->image);
             }
             elseif((is_null($this->worker) || $this->worker === $this::WORKER_GD) && $this->gdAvailable()) {
 
@@ -280,7 +269,7 @@ class Picture {
         }
         else {
 
-            return new Imagick($tmpImage);
+            return $this->createImagick($tmpImage);
         }
     }
 
@@ -324,7 +313,7 @@ class Picture {
         }
         else {
 
-            $this->resource = new Imagick($tmpImage);
+            $this->resource = $this->createImagick($tmpImage);
         }
     }
 
@@ -639,7 +628,7 @@ class Picture {
 
             if($extension === 'jpg') {
 
-                $background = new Imagick();
+                $background = $this->createImagick();
                 $background->newImage(
 
                     $this->resource->getImageWidth(),

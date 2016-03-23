@@ -185,7 +185,7 @@ class Resize extends PictureEffect {
 
             $imagick->scaleImage($this->width, $this->height, TRUE);
 
-            $rectangle = new Imagick();
+            $rectangle = $picture->createImagick();
             $rectangle->setFormat('png');
             $rectangle->newImage($this->width, $this->height, new \ImagickPixel($this->color ?: 'transparent'));
             $rectangle->compositeImage($imagick, $imagick->getImageCompose(),

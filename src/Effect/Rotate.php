@@ -93,7 +93,7 @@ class Rotate extends PictureEffect {
             // ADD IMAGE BACKGROUND COLOR AFTER ROTATION (rotateImage is bugged)
             if($this->background && $this->background !== 'transparent') {
 
-                $background = new Imagick();
+                $background = $picture->createImagick();
                 $background->setFormat('png');
                 $background->newImage(
 

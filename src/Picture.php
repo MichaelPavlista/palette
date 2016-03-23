@@ -80,6 +80,12 @@ class Picture {
      */
     public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL) {
 
+        // SOLVE IMAGICK SEGMENTATION FAULT BUG
+        if($this->imagickAvailable()) {
+
+            $this->fixImagickSegmentationFault();
+        }
+
         // SUPPORT FOR PALETTE IMAGE QUERY
         if(strpos($image, '@')) {
 
@@ -126,6 +132,21 @@ class Picture {
 
         $this->storage = $pictureGenerator;
         $this->worker = $worker;
+    }
+
+
+    /**
+     * Solve Imagick segmentation fault bug
+     * https://bugs.php.net/bug.php?id=61122
+     */
+    protected function fixImagickSegmentationFault() {
+
+        static $isFixed;
+
+        if(!$isFixed) {
+
+            $isFixed = Imagick::setResourceLimit(6, 1);
+        }
     }
 
 

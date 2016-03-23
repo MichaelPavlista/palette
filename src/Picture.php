@@ -138,10 +138,16 @@ class Picture {
     /**
      * Solve Imagick segmentation fault bug
      * https://bugs.php.net/bug.php?id=61122
+     * @param null|bool $setFixed
      */
-    protected function fixImagickSegmentationFault() {
+    protected function fixImagickSegmentationFault($setFixed = NULL) {
 
         static $isFixed;
+
+        if(!is_null($setFixed)) {
+
+            $isFixed = $setFixed;
+        }
 
         if(!$isFixed) {
 

@@ -14,6 +14,7 @@
 namespace Palette\Utils;
 
 use Palette\Exception;
+use Imagick;
 
 /**
  * Class Compare
@@ -23,33 +24,36 @@ use Palette\Exception;
 class Compare {
 
     /**
-     * @var string path to image
+     * @var Imagick
      */
     protected $image1;
 
     /**
-     * @var string path to image
+     * @var Imagick
      */
     protected $image2;
 
     /**
-     * @var int number of different pixels
+     * @var float
      */
-    protected $differentPixels = 0;
+    protected $tolerance;
 
 
     /**
      * Compare constructor.
-     * @param string $image1 path to first image
-     * @param string $image2 path to second image
+     * @param $image1
+     * @param $image2
+     * @param float $tolerance
      * @throws Exception
      */
-    public function __construct($image1, $image2) {
+    public function __construct($image1, $image2, $tolerance = 0.005) {
+
+        $this->tolerance = $tolerance;
 
         // LOAD FIRST IMAGE
         if(file_exists($image1) && is_readable($image1)) {
 
-            $this->image1 = $this->loadImage($image1);
+            $this->image1 = new Imagick($image1);
         }
         else {
 
@@ -59,7 +63,7 @@ class Compare {
         // LOAD SECOND IMAGE
         if(file_exists($image2) && is_readable($image2)) {
 
-            $this->image2 = $this->loadImage($image2);
+            $this->image2 = new Imagick($image2);
         }
         else {
 
@@ -69,31 +73,13 @@ class Compare {
 
 
     /**
-     * Load image into GD resource.
-     * @param string $imagePath path to image
-     * @return resource GD
-     * @throws Exception
-     */
-    protected function loadImage($imagePath) {
-
-        $image = @imagecreatefromstring(file_get_contents($imagePath));
-
-        if(!$image) {
-
-            throw new Exception('File ' . $imagePath . ' is not valid image.');
-        }
-
-        return $image;
-    }
-
-
-    /**
      * Check if dimensions of images is equal.
      * @return bool
      */
     public function isDimensionsEqual() {
 
-        if(imagesx($this->image1) !== imagesx($this->image2) || imagesy($this->image1) !== imagesy($this->image2)) {
+        if($this->image1->getImageWidth() !== $this->image2->getImageWidth() ||
+            $this->image1->getImageHeight() !== $this->image2->getImageHeight()) {
 
             return FALSE;
         }
@@ -114,30 +100,25 @@ class Compare {
             return FALSE;
         }
 
-        // CHECK IF IMAGES IS EQUAL PIXEL TO PIXEL
-        $this->differentPixels = 0;
+        $compare = $this->image1->compareImages($this->image2, Imagick::METRIC_MEANSQUAREERROR);
 
-        $sx1 = imagesx($this->image1);
-        $sy1 = imagesy($this->image1);
+        // IMAGE IS EXACTLY THE SAME
+        if($compare === TRUE) {
 
-        for($x = 0; $x < $sx1; $x++) {
+            return TRUE;
+        }
+        // IMAGE IS IN TOLERABLE RANGE
+        elseif($compare) {
 
-            for($y = 0; $y < $sy1; $y++) {
+            var_dump($compare[1]);
 
-                $index1 = imagecolorat($this->image1, $x, $y);
-                $pixel1 = imagecolorsforindex($this->image1, $index1);
+            if($compare[1] < $this->tolerance) {
 
-                $index2 = imagecolorat($this->image2, $x, $y);
-                $pixel2 = imagecolorsforindex($this->image2, $index2);
-
-                if($pixel1 !== $pixel2) {
-
-                    $this->differentPixels++;
-                }
+                return TRUE;
             }
         }
 
-        return !$this->differentPixels;
+        return FALSE;
     }
 
 }

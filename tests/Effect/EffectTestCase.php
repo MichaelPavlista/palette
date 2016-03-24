@@ -93,7 +93,7 @@ class EffectTestCase extends Tester\TestCase {
         }
         else {
 
-            $compare = new Palette\Utils\Compare($testImage, $compareFile);
+            $compare = new Palette\Utils\Compare($testImage, $compareFile, 0.015);
 
             if(!$compare->isEqual()) {
 

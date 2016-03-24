@@ -20,7 +20,7 @@
     "ext-imagick": "*"
   },
   "suggest": {
-    "ext-imagick": "For support cmyk images, advanced Palette effects and better performance."
+    "ext-imagick": "For support cmyk images, better performance and Utils\Compare tool."
   },
   "autoload": {
     "classmap": ["src/"]

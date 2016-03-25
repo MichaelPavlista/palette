@@ -14,6 +14,7 @@
 namespace Palette\Effect;
 
 use Palette\Picture;
+use Imagick;
 
 /**
  * Class Opacity
@@ -52,7 +53,7 @@ class Opacity extends PictureEffect {
 
             imagesavealpha($resource, TRUE);
             imagealphablending($resource, FALSE);
-            
+
             $w = imagesx($resource);
             $h = imagesy($resource);
 
@@ -99,7 +100,7 @@ class Opacity extends PictureEffect {
                     );
 
                     // MODIFY SINGLE PIXEL VALUE
-                    imagesetpixel( $resource, $x, $y, $alphaColorXY );
+                    imagesetpixel($resource, $x, $y, $alphaColorXY);
                 }
             }
 
@@ -107,8 +108,13 @@ class Opacity extends PictureEffect {
         }
         else {
 
-            $resource->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $this->opacity, \Imagick::CHANNEL_ALPHA);
+            if(!$resource->getImageAlphaChannel()) {
+
+                $resource->setImageAlphaChannel(Imagick::ALPHACHANNEL_ACTIVATE);
+            }
+
+            $resource->evaluateImage(Imagick::EVALUATE_MULTIPLY, $this->opacity, Imagick::CHANNEL_ALPHA);
         }
     }
-    
+
 }

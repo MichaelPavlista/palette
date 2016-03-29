@@ -1,5 +1,8 @@
 <?php
 
+// RUN TESTS BY THIS COMMAND:
+// vendor/bin/tester vendor/pavlista/palette/tests/ -p php -c vendor/pavlista/palette/tests/php.ini
+
 set_time_limit(600);
 ini_set('memory_limit','1024M');
 

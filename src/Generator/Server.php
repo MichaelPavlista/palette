@@ -13,6 +13,7 @@
 
 namespace Palette\Generator;
 
+use Palette\Exception;
 use Palette\Picture;
 
 /**
@@ -83,13 +84,22 @@ class Server extends CurrentExecution implements IServerGenerator {
     /**
      * Execute server generator backend.
      * @return void
+     * @throws Exception
      */
     public function serverResponse() {
 
         if(!empty($_GET['imageQuery'])) {
 
-            $picture = $this->loadPicture($_GET['imageQuery']);
-            $picture->save($this->getPath($picture));
+            $picture  = $this->loadPicture($_GET['imageQuery']);
+            $savePath = $this->getPath($picture);
+
+            $picture->save($savePath);
+
+            if($savePath !== $this->getPath($picture)) {
+
+                throw new Exception('Picture effect is changing its own arguments on effect apply');
+            }
+
             $picture->output();
         }
 

@@ -73,12 +73,13 @@ class Picture {
 
     /**
      * Picture constructor.
-     * @param $image
+     * @param string $image
      * @param IPictureGenerator|NULL $pictureGenerator
      * @param null $worker worker constant
+     * @param null|string $fallbackImage absolute path to image witch can be used when source image is missing
      * @throws Exception
      */
-    public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL) {
+    public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL, $fallbackImage = NULL) {
 
         // SUPPORT FOR PALETTE IMAGE QUERY
         if(strpos($image, '@')) {
@@ -86,7 +87,26 @@ class Picture {
             $imageParts  = explode('@', $image);
             $this->image = realpath($imageParts[0]);
 
+            // EXTRACTION OF IMAGE QUERY
             $imageParts[1] = preg_replace('/\s+/', '', $imageParts[1]);
+
+            // IS IMAGE QUERY TEMPALTE?
+            if(strncmp($imageParts[1], '.', 1) === 0) {
+                
+                if(!$pictureGenerator) {
+
+                    throw new Exception("Using pallete query template $imageParts[1] without defined generator");
+                }
+
+                $templateQuery = $pictureGenerator->getTemplateQuery(mb_substr($imageParts[1], 1));
+
+                if(!$templateQuery) {
+
+                    throw new Exception("Trying to use undefined pallete query template $imageParts[1]");
+                }
+
+                $imageParts[1] = preg_replace('/\s+/', '', $templateQuery);
+            }
 
             foreach(preg_split("/[\s&|]+/", $imageParts[1]) as $effect) {
 
@@ -121,11 +141,19 @@ class Picture {
         // CHECK IF IMAGE EXISTS AND IS READABLE
         if(!file_exists($this->image) || !is_readable($this->image)) {
 
-            throw new Exception('Image file missing or not readable');
+            // USE FALLBACK IMAGE INSTEAD
+            if($fallbackImage && file_exists($fallbackImage) && is_readable($fallbackImage)) {
+
+                $this->image = $fallbackImage;
+            }
+            else {
+
+                throw new Exception("Image file missing or not readable, query: $image");
+            }
         }
 
         $this->storage = $pictureGenerator;
-        $this->worker = $worker;
+        $this->worker  = $worker;
     }
 
 
@@ -291,7 +319,7 @@ class Picture {
      */
     public function setResource($resource) {
 
-        if($this->getWorker($resource) === $this->getResource($this->resource)) {
+        if($this->getWorker($resource) === $this->getWorker($this->resource)) {
 
             $this->resource = $resource;
         }

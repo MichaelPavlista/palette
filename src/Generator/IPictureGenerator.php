@@ -14,6 +14,7 @@
 namespace Palette\Generator;
 
 use Palette\Picture;
+use Palette\Exception;
 
 /**
  * Interface IPictureGenerator
@@ -62,5 +63,30 @@ interface IPictureGenerator {
      * @return string
      */
     public function getUrl(Picture $picture);
+
+
+    /**
+     * Set fallback image witch is used when requred image is not found.
+     * @param string $fallbackImage absolute or relative path to fallback image.
+     * @throws Exception
+     */
+    public function setFallbackImage($fallbackImage);
+
+
+    /**
+     * Set image query template
+     * @param string $template
+     * @param string $imageQuery
+     * @return void
+     */
+    public function setTemplateQuery($template, $imageQuery);
+
+
+    /**
+     * Get defined template image query
+     * @param string $template
+     * @return string|bool
+     */
+    public function getTemplateQuery($template);
 
 }

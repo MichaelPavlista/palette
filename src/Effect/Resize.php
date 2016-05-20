@@ -221,6 +221,9 @@ class Resize extends PictureEffect {
         $resizeX = 0;
         $resizeY = 0;
 
+        $realWidth  = $this->width;
+        $realHeight = $this->height;
+
         if($this->resizeMode === $this::MODE_FILL) {
 
             $ratioH = $this->height / $origHeight;
@@ -230,8 +233,8 @@ class Resize extends PictureEffect {
             $height = max($origHeight * $ratioH, $origHeight * $ratioW);
             $ratio  = max($width / $origWidth, $height / $origHeight);
 
-            $this->width  = round($origWidth * $ratio);
-            $this->height = round($origHeight * $ratio);
+            $realWidth  = round($origWidth * $ratio);
+            $realHeight = round($origHeight * $ratio);
         }
         elseif($this->resizeMode === $this::MODE_EXACT) {
 
@@ -294,18 +297,18 @@ class Resize extends PictureEffect {
 
             $resizeRatio = max($widthRatio, $heightRatio);
 
-            $this->width  = floor($origWidth / $resizeRatio);
-            $this->height = floor($origHeight / $resizeRatio);
+            $realWidth  = floor($origWidth / $resizeRatio);
+            $realHeight = floor($origHeight / $resizeRatio);
         }
 
-        $pictureResized   = imagecreatetruecolor($this->width, $this->height);
+        $pictureResized   = imagecreatetruecolor($realWidth, $realHeight);
         $transparentColor = imagecolorallocatealpha($pictureResized, 0, 0, 0, 127);
 
         imagefill($pictureResized, 0, 0, $transparentColor);
 
         imagesavealpha($pictureResized, true);
 
-        imagecopyresampled($pictureResized, $resource, 0, 0, $resizeX, $resizeY, $this->width, $this->height, $origWidth, $origHeight);
+        imagecopyresampled($pictureResized, $resource, 0, 0, $resizeX, $resizeY, $realWidth, $realHeight, $origWidth, $origHeight);
 
         return $pictureResized;
     }

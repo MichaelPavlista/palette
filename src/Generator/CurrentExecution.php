@@ -39,6 +39,16 @@ class CurrentExecution implements IPictureGenerator {
      */
     protected $basePath;
 
+    /**
+     * @var array palette query templates storage
+     */
+    protected $template = array();
+
+    /**
+     * @var string|null absolute path to fallback image
+     */
+    protected $fallbackImage;
+
 
     /**
      * CurrentExecution constructor.
@@ -74,7 +84,7 @@ class CurrentExecution implements IPictureGenerator {
      */
     public function loadPicture($image, $worker = NULL) {
 
-        return new Picture($image, $this, $worker);
+        return new Picture($image, $this, $worker, $this->fallbackImage);
     }
 
 
@@ -164,6 +174,53 @@ class CurrentExecution implements IPictureGenerator {
 
         return pathinfo($imageFile, PATHINFO_FILENAME) . '.' .
         sprintf("%u", crc32($picture->getImageQuery())) . '.' . pathinfo($imageFile, PATHINFO_EXTENSION);
+    }
+
+
+    /**
+     * Set fallback image witch is used when requred image is not found.
+     * @param string $fallbackImage absolute or relative path to fallback image.
+     * @throws Exception
+     */
+    public function setFallbackImage($fallbackImage) {
+
+        $fallbackImagePath = realpath($fallbackImage);
+
+        if(file_exists($fallbackImagePath) && is_readable($fallbackImagePath)) {
+
+            $this->fallbackImage = $fallbackImagePath;
+            return;
+        }
+
+        throw new Exception("Default image missing or not readable, path: $fallbackImage");
+    }
+
+
+    /**
+     * Set image query template
+     * @param string $template
+     * @param string $imageQuery
+     * @return void
+     */
+    public function setTemplateQuery($template, $imageQuery) {
+
+        $this->template[$template] = $imageQuery;
+    }
+
+
+    /**
+     * Get defined template image query
+     * @param string $template
+     * @return string|bool
+     */
+    public function getTemplateQuery($template) {
+
+        if(isset($this->template[$template])) {
+
+            return $this->template[$template];
+        }
+
+        return FALSE;
     }
 
 }

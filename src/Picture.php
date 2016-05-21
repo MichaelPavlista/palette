@@ -506,7 +506,7 @@ class Picture {
      * Set picture output quality 1 - 100
      * @param int $quality
      */
-    public function quality($quality = 90) {
+    public function quality($quality = 100) {
 
         if(is_int($quality)) {
 

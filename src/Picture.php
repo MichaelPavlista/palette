@@ -121,6 +121,14 @@ class Picture {
                     $effectClass = "Palette\\Effect\\" . ucfirst($effectQuery[0]);
 
                     unset($effectQuery[0]);
+
+                    // SUPPORT QUALITY ARGUMENT IN PALETTE QUERY
+                    if($effectClass === 'Palette\Effect\Quality' && isset($effectQuery[1])) {
+
+                        $this->quality($effectQuery[1]);
+
+                        continue;
+                    }
                 }
 
                 if(class_exists($effectClass)) {
@@ -507,8 +515,8 @@ class Picture {
      * @param int $quality
      */
     public function quality($quality = 100) {
-
-        if(is_int($quality)) {
+        
+        if(is_numeric($quality)) {
 
             $this->quality = $quality;
         }

@@ -665,6 +665,8 @@ class Picture {
                 );
                 $background->compositeimage($this->resource, Imagick::COMPOSITE_OVER, 0, 0);
                 $background->setImageFormat('jpg');
+                $background->setImageCompression(Imagick::COMPRESSION_JPEG);
+                $background->setImageCompressionQuality($this->quality);
                 $background->writeImage($file);
             }
             elseif($extension === 'gif') {

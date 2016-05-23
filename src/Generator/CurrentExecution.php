@@ -70,9 +70,9 @@ class CurrentExecution implements IPictureGenerator {
             throw new Exception("Image storagePath '$storagePath' is not writable");
         }
 
-        $this->storagePath = $storagePath;
+        $this->storagePath = $this->unifyPath($storagePath);
         $this->storageUrl = $storageUrl;
-        $this->basePath = $basePath;
+        $this->basePath = $this->unifyPath($basePath);
     }
 
 
@@ -221,6 +221,17 @@ class CurrentExecution implements IPictureGenerator {
         }
 
         return FALSE;
+    }
+
+    /**
+     * Unify filesystem path
+     * @param string $path
+     * @param string $slash
+     * @return string
+     */
+    protected function unifyPath($path, $slash = DIRECTORY_SEPARATOR) {
+
+        return preg_replace('/\\'. $slash .'+/', $slash, str_replace(array('/', "\\"), $slash, $path));
     }
 
 }

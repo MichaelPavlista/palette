@@ -43,7 +43,7 @@ class Server extends CurrentExecution implements IServerGenerator {
      */
     public function getPath(Picture $picture) {
 
-        $storagePath = str_replace($this->basePath, DIRECTORY_SEPARATOR, pathinfo($picture->getImage(), PATHINFO_DIRNAME) . '/');
+        $storagePath = str_replace($this->basePath, DIRECTORY_SEPARATOR, pathinfo($picture->getImage(), PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR);
 
         return $this->unifyPath($this->storagePath . '/' . $storagePath . '/' . $this->getFileName($picture));
     }
@@ -58,7 +58,8 @@ class Server extends CurrentExecution implements IServerGenerator {
 
         $file = $this->getPath($picture);
 
-        $url = str_replace($this->basePath, DIRECTORY_SEPARATOR, pathinfo($picture->getImage(), PATHINFO_DIRNAME) . '/');
+        $url = str_replace($this->basePath, DIRECTORY_SEPARATOR, pathinfo($picture->getImage(), PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR);
+        $url = $this->unifyPath($url, '/');
         $url = preg_replace('/([^:])(\/{2,})/', '$1/', $this->storageUrl . '/' . $url . '/' . $this->getFileName($picture));
 
         // BUILD VARIANT URL
@@ -143,18 +144,6 @@ class Server extends CurrentExecution implements IServerGenerator {
 
         fwrite($fp, $command);
         fclose($fp);
-    }
-
-
-    /**
-     * Unify filesystem path
-     * @param string $path
-     * @param string $slash
-     * @return string
-     */
-    protected function unifyPath($path, $slash = DIRECTORY_SEPARATOR) {
-
-        return preg_replace('/\\'. $slash .'+/', $slash, str_replace(array('/', "\\"), $slash, $path));
     }
 
 }

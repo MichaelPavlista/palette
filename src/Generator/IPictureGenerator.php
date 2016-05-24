@@ -32,9 +32,16 @@ interface IPictureGenerator {
 
 
     /**
+     * Set picture loader witch can modify or change loaded picture
+     * @param IPictureLoader $pictureLoader
+     * @throws Exception
+     */
+    public function setPictureLoader(IPictureLoader $pictureLoader);
+
+
+    /**
      * Save picture variant to generator storage.
      * @param Picture $picture
-     * @return void
      */
     public function save(Picture $picture);
 
@@ -74,10 +81,16 @@ interface IPictureGenerator {
 
 
     /**
+     * Get fallback image witch is used when requred image is not found.
+     * @return string|null
+     */
+    public function getFallbackImage();
+
+    
+    /**
      * Set image query template
      * @param string $template
      * @param string $imageQuery
-     * @return void
      */
     public function setTemplateQuery($template, $imageQuery);
 

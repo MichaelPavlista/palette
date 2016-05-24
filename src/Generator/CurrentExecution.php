@@ -49,6 +49,11 @@ class CurrentExecution implements IPictureGenerator {
      */
     protected $fallbackImage;
 
+    /**
+     * @var IPictureLoader witch can modify or change loaded picture
+     */
+    protected $pictureLoader;
+
 
     /**
      * CurrentExecution constructor.
@@ -84,7 +89,23 @@ class CurrentExecution implements IPictureGenerator {
      */
     public function loadPicture($image, $worker = NULL) {
 
+        if($this->pictureLoader) {
+            
+            return $this->pictureLoader->loadPicture($image, $this, $worker);
+        }
+
         return new Picture($image, $this, $worker, $this->fallbackImage);
+    }
+
+
+    /**
+     * Set picture loader witch can modify or change loaded picture
+     * @param IPictureLoader $pictureLoader
+     * @throws Exception
+     */
+    public function setPictureLoader(IPictureLoader $pictureLoader) {
+
+        $this->pictureLoader = $pictureLoader;
     }
 
 
@@ -193,6 +214,16 @@ class CurrentExecution implements IPictureGenerator {
         }
 
         throw new Exception("Default image missing or not readable, path: $fallbackImage");
+    }
+
+
+    /**
+     * Get fallback image witch is used when requred image is not found.
+     * @return string|null
+     */
+    public function getFallbackImage() {
+
+        return $this->fallbackImage;
     }
 
 

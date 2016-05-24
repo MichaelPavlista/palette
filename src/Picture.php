@@ -81,6 +81,12 @@ class Picture {
      */
     public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL, $fallbackImage = NULL) {
 
+        // LOAD PICTURE FALLBACK IMAGE FROM GENERATOR
+        if(!$fallbackImage && $pictureGenerator) {
+
+            $fallbackImage = $pictureGenerator->getFallbackImage();
+        }
+
         // SUPPORT FOR PALETTE IMAGE QUERY
         if(strpos($image, '@')) {
 

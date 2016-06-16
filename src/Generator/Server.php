@@ -127,9 +127,24 @@ class Server extends CurrentExecution implements IServerGenerator {
         }
 
         $post = implode('&', $post);
+
         $request = parse_url($url);
 
-        $fp = fsockopen($request['host'], isset($request['port']) ? $request ['port'] : 80, $errNo, $errStr, 60);
+        // SUPPORT FOR RELATIVE GENERATOR URL
+        if(!isset($request['host']))
+        {
+            $request['host'] = $_SERVER['HTTP_HOST'];
+        }
+
+        if(!isset($request['port']))
+        {
+            $request['port'] = $_SERVER['SERVER_PORT'];
+        }
+
+        // SEND REQUEST WITHOUT WAITING
+        $protocol = isset($_SERVER['HTTPS']) ? 'ssl://' : '';
+
+        $fp = fsockopen($protocol . $request['host'], isset($request['port']) ? $request['port'] : 80, $errNo, $errStr, 60);
 
         $command  = "POST " . $request['path'] . " HTTP/1.1\r\n";
         $command .= "Host: " . $request['host'] . "\r\n";

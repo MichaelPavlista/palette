@@ -153,7 +153,7 @@ class Picture {
         }
 
         // CHECK IF IMAGE EXISTS AND IS READABLE
-        if(!file_exists($this->image) || !is_readable($this->image)) {
+        if(!file_exists($this->image) || !is_readable($this->image) || !is_file($this->image)) {
 
             // USE FALLBACK IMAGE INSTEAD
             if($fallbackImage && file_exists($fallbackImage) && is_readable($fallbackImage)) {

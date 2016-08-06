@@ -594,6 +594,11 @@ class Picture {
 
             if($extension === 'png') {
 
+                if($this->progressive)
+                {
+                    imageinterlace($this->resource, TRUE);
+                }
+
                 imagepng($this->resource, $file, 9);
             }
             elseif($extension === 'gif') {
@@ -660,6 +665,11 @@ class Picture {
                     imagecolortransparent($gifResource, $transparentColor);
                 }
 
+                if($this->progressive)
+                {
+                    imageinterlace($gifResource, TRUE);
+                }
+
                 imagegif($gifResource, $file);
             }
             else {
@@ -674,6 +684,12 @@ class Picture {
 
                 imagefilledrectangle($background, 0, 0, $width, $height, $whiteColor);
                 imagecopy($background, $image, 0, 0, 0, 0, $width, $height);
+
+                if($this->progressive)
+                {
+                    imageinterlace($background, TRUE);
+                }
+
                 imagejpeg($background, $file, $this->quality);
             }
         }
@@ -751,6 +767,10 @@ class Picture {
 
             unlink($tmpImage);
         }
+
+        echo 'OK';
+
+        unlink($file);
     }
 
 

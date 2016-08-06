@@ -21,21 +21,15 @@ use Imagick;
  * Tool for comparing two image files
  * @package Palette\Utils
  */
-class Compare {
-
-    /**
-     * @var Imagick
-     */
+class Compare
+{
+    /** @var Imagick */
     protected $image1;
 
-    /**
-     * @var Imagick
-     */
+    /** @var Imagick */
     protected $image2;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     protected $tolerance;
 
 
@@ -46,27 +40,27 @@ class Compare {
      * @param float $tolerance
      * @throws Exception
      */
-    public function __construct($image1, $image2, $tolerance = 0.005) {
-
+    public function __construct($image1, $image2, $tolerance = 0.005)
+    {
         $this->tolerance = $tolerance;
 
         // LOAD FIRST IMAGE
-        if(file_exists($image1) && is_readable($image1)) {
-
+        if(file_exists($image1) && is_readable($image1))
+        {
             $this->image1 = new Imagick($image1);
         }
-        else {
-
+        else
+        {
             throw new Exception('First image to compare is missing or not readable');
         }
 
         // LOAD SECOND IMAGE
-        if(file_exists($image2) && is_readable($image2)) {
-
+        if(file_exists($image2) && is_readable($image2))
+        {
             $this->image2 = new Imagick($image2);
         }
-        else {
-
+        else
+        {
             throw new Exception('Second image to compare is missing or not readable');
         }
     }
@@ -76,11 +70,11 @@ class Compare {
      * Check if dimensions of images is equal.
      * @return bool
      */
-    public function isDimensionsEqual() {
-
-        if($this->image1->getImageWidth() !== $this->image2->getImageWidth() ||
-            $this->image1->getImageHeight() !== $this->image2->getImageHeight()) {
-
+    public function isDimensionsEqual()
+    {
+        if($this->image1->getImageWidth() !== $this->image2->getImageWidth()
+            || $this->image1->getImageHeight() !== $this->image2->getImageHeight())
+        {
             return FALSE;
         }
 
@@ -92,28 +86,26 @@ class Compare {
      * Check if images is exactly the same.
      * @return bool
      */
-    public function isEqual() {
-
+    public function isEqual()
+    {
         // CHECK IMAGES DIMENSIONS
-        if(!$this->isDimensionsEqual()) {
-
+        if(!$this->isDimensionsEqual())
+        {
             return FALSE;
         }
 
         $compare = $this->image1->compareImages($this->image2, Imagick::METRIC_MEANSQUAREERROR);
 
         // IMAGE IS EXACTLY THE SAME
-        if($compare === TRUE) {
-
+        if($compare === TRUE)
+        {
             return TRUE;
         }
         // IMAGE IS IN TOLERABLE RANGE
-        elseif($compare) {
-
-            var_dump($compare[1]);
-
-            if($compare[1] < $this->tolerance) {
-
+        elseif($compare)
+        {
+            if($compare[1] < $this->tolerance)
+            {
                 return TRUE;
             }
         }

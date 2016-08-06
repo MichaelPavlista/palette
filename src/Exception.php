@@ -17,6 +17,7 @@ namespace Palette;
  * Class Exception
  * @package Palette
  */
-class Exception extends \Exception {
+class Exception extends \Exception
+{
 
 }

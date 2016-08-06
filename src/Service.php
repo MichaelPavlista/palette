@@ -21,11 +21,9 @@ use Palette\Generator\IServerGenerator;
  * Simple Palette service implementation.
  * @package Palette
  */
-class Service {
-
-    /**
-     * @var IPictureGenerator
-     */
+class Service
+{
+    /** @var IPictureGenerator */
     protected $generator;
 
 
@@ -33,8 +31,8 @@ class Service {
      * Palette service constructor.
      * @param IPictureGenerator $generator
      */
-    public function __construct(IPictureGenerator $generator)  {
-
+    public function __construct(IPictureGenerator $generator)
+    {
         $this->generator = $generator;
     }
 
@@ -44,8 +42,8 @@ class Service {
      * @param $image
      * @return null|string
      */
-    public function __invoke($image) {
-
+    public function __invoke($image)
+    {
         return $this->generator->loadPicture($image)->getUrl();
     }
 
@@ -56,10 +54,10 @@ class Service {
      * @param null $imageQuery
      * @return null|string
      */
-    public function getUrl($image, $imageQuery = NULL) {
-
-        if(!is_null($imageQuery)) {
-
+    public function getUrl($image, $imageQuery = NULL)
+    {
+        if(!is_null($imageQuery))
+        {
             $image .= '@' . $imageQuery;
         }
 
@@ -72,8 +70,8 @@ class Service {
      * @param $image
      * @return Picture
      */
-    public function getPicture($image) {
-
+    public function getPicture($image)
+    {
         return $this->generator->loadPicture($image);
     }
 
@@ -82,8 +80,8 @@ class Service {
      * Get Palette generator instance
      * @return IPictureGenerator
      */
-    public function getGenerator() {
-
+    public function getGenerator()
+    {
         return $this->generator;
     }
 
@@ -92,10 +90,10 @@ class Service {
      * If generator implements interface IServerGenerator execute server generator backend.
      * @return void
      */
-    public function serverResponse() {
-
-        if($this->generator instanceof IServerGenerator) {
-
+    public function serverResponse()
+    {
+        if($this->generator instanceof IServerGenerator)
+        {
             $this->generator->serverResponse();
         }
     }

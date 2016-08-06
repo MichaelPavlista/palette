@@ -2,7 +2,6 @@
 
 // RUN TESTS BY THIS COMMAND:
 // vendor/bin/tester vendor/pavlista/palette/tests/ -p php -c vendor/pavlista/palette/tests/php.ini
-
 set_time_limit(600);
 ini_set('memory_limit','1024M');
 
@@ -13,8 +12,8 @@ $livePath = realpath(__DIR__ . '/../../../autoload.php');
 
 $autoloaderPath = $livePath ?: $devPath;
 
-if(!@include $autoloaderPath) {
-
+if(!@include $autoloaderPath)
+{
     echo 'Install Nette Tester using `composer install`';
     exit(1);
 }
@@ -29,8 +28,8 @@ date_default_timezone_set('Europe/Prague');
 define('TEMP_DIR', __DIR__ . '/tmp/' . lcg_value());
 @mkdir(TEMP_DIR, 0777, TRUE);
 
-register_shutdown_function(function () {
-
+register_shutdown_function(function ()
+{
     Tester\Helpers::purge(TEMP_DIR);
     rmdir(TEMP_DIR);
 });

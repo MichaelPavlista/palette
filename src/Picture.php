@@ -51,6 +51,11 @@ class Picture {
     protected $quality = 100;
 
     /**
+     * @var null|bool save as progressive image?
+     */
+    protected $progressive = NULL;
+
+    /**
      * @var array applied effects on picture
      */
     protected $effect = array();
@@ -134,6 +139,12 @@ class Picture {
                         $this->quality($effectQuery[1]);
 
                         continue;
+                    }
+
+                    // SUPPORT PROGRESSIVE IMAGE SAVING ARGUMENT IN PALETTE QUERY
+                    if($effectClass === 'Palette\Effect\Progressive')
+                    {
+                        $this->progressive = TRUE;
                     }
                 }
 

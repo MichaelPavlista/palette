@@ -708,6 +708,12 @@ class Picture {
                 $background->setImageFormat('jpg');
                 $background->setImageCompression(Imagick::COMPRESSION_JPEG);
                 $background->setImageCompressionQuality($this->quality);
+
+                if($this->progressive)
+                {
+                    $background->setInterlaceScheme(Imagick::INTERLACE_PLANE);
+                }
+
                 $background->writeImage($file);
             }
             elseif($extension === 'gif') {
@@ -751,9 +757,19 @@ class Picture {
                     $iterator->syncIterator();
                 }
 
+                if($this->progressive)
+                {
+                    $this->resource->setInterlaceScheme(Imagick::INTERLACE_PLANE);
+                }
+
                 $this->resource->writeImage($file);
             }
             else {
+
+                if($this->progressive)
+                {
+                    $this->resource->setInterlaceScheme(Imagick::INTERLACE_PLANE);
+                }
 
                 $this->resource->writeImage($file);
             }
@@ -767,10 +783,6 @@ class Picture {
 
             unlink($tmpImage);
         }
-
-        echo 'OK';
-
-        unlink($file);
     }
 
 

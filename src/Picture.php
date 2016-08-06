@@ -704,7 +704,7 @@ class Picture {
                     $this->resource->getImageHeight(),
                     '#FFFFFF'
                 );
-                $background->compositeimage($this->resource, Imagick::COMPOSITE_OVER, 0, 0);
+                $background->compositeImage($this->resource, Imagick::COMPOSITE_OVER, 0, 0);
                 $background->setImageFormat('jpg');
                 $background->setImageCompression(Imagick::COMPRESSION_JPEG);
                 $background->setImageCompressionQuality($this->quality);

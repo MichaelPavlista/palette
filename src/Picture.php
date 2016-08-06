@@ -457,6 +457,11 @@ class Picture
 
         $command .= 'Quality;' . $this->quality . '&';
 
+        if($this->progressive)
+        {
+            $command .= 'Progressive&';
+        }
+
         return substr($command, 0, strlen($command) - 1);
     }
 

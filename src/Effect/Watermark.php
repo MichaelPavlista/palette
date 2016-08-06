@@ -20,11 +20,9 @@ use Imagick;
  * Class Watermark
  * @package Palette\Effect
  */
-class Watermark extends PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+class Watermark extends PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array(
 
         'watermark' => NULL,
@@ -45,10 +43,10 @@ class Watermark extends PictureEffect {
      * @param null $size
      * @param int $space
      */
-    public function __construct($watermark, $position = 'bottomRight', $opacity = 0.5, $size = NULL, $space = 10) {
-
-        if(!in_array($position, array('repeat', 'center')) && $space) {
-
+    public function __construct($watermark, $position = 'bottomRight', $opacity = 0.5, $size = NULL, $space = 10)
+    {
+        if(!in_array($position, array('repeat', 'center')) && $space)
+        {
             $offset = explode(',', $space);
 
             $this->offsetX = $offset[0];
@@ -67,18 +65,18 @@ class Watermark extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             $resource = $this->applyWatermarkGD($resource, $picture);
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $this->applyWatermarkImagick($resource);
         }
     }
@@ -88,8 +86,8 @@ class Watermark extends PictureEffect {
      * Watermark effect processed by Imagick
      * @param Imagick $image
      */
-    private function applyWatermarkImagick(Imagick $image) {
-
+    private function applyWatermarkImagick(Imagick $image)
+    {
         $pictureWidth  = $image->getImageWidth();
         $pictureHeight = $image->getImageHeight();
 
@@ -98,8 +96,8 @@ class Watermark extends PictureEffect {
         $opacity = new Opacity($this->opacity);
         $opacity->apply($watermarkPicture);
 
-        if($this->size) {
-
+        if($this->size)
+        {
             $resize = new Resize(
                 $pictureWidth / 100 * $this->size,
                 $pictureHeight / 100 * $this->size,
@@ -114,14 +112,14 @@ class Watermark extends PictureEffect {
         $watermarkWidth  = $watermark->getImageWidth();
         $watermarkHeight = $watermark->getImageHeight();
 
-        switch($this->position) {
-
+        switch($this->position)
+        {
             case 'repeat':
 
-                for($w = 0; $w < $pictureWidth; $w += $watermarkWidth + $this->space) {
-
-                    for($h = 0; $h < $pictureHeight; $h += $watermarkHeight + $this->space) {
-
+                for($w = 0; $w < $pictureWidth; $w += $watermarkWidth + $this->space)
+                {
+                    for($h = 0; $h < $pictureHeight; $h += $watermarkHeight + $this->space)
+                    {
                         $image->compositeImage($watermark, $watermark->getImageCompose(), $w, $h);
                     }
                 }
@@ -180,8 +178,8 @@ class Watermark extends PictureEffect {
         $opacity = new Opacity($this->opacity);
         $opacity->apply($watermarkPicture);
 
-        if($this->size) {
-
+        if($this->size)
+        {
             $resize = new Resize(
                 $pictureWidth / 100 * $this->size,
                 $pictureHeight / 100 * $this->size,
@@ -199,14 +197,14 @@ class Watermark extends PictureEffect {
         $watermarkHeight = imagesx($watermark);
 
         // CALCULATE WATERMARK POSITION
-        switch($this->position) {
-
+        switch($this->position)
+        {
             case 'repeat':
 
-                for($w = 0; $w < $pictureWidth; $w += $watermarkWidth + $this->space) {
-
-                    for($h = 0; $h < $pictureHeight; $h += $watermarkHeight + $this->space) {
-
+                for($w = 0; $w < $pictureWidth; $w += $watermarkWidth + $this->space)
+                {
+                    for($h = 0; $h < $pictureHeight; $h += $watermarkHeight + $this->space)
+                    {
                         imagecopy($resource, $watermark, $w, $h, 0, 0, $watermarkWidth, $watermarkHeight);
                     }
                 }

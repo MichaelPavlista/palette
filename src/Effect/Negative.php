@@ -19,24 +19,24 @@ use Palette\Picture;
  * Class Negative
  * @package Palette\Effect
  */
-class Negative extends PictureEffect {
-
+class Negative extends PictureEffect
+{
     /**
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
-        if($picture->isGd() || $picture->gdAvailable()) {
-
+    public function apply(Picture $picture)
+    {
+        if($picture->isGd() || $picture->gdAvailable())
+        {
             $resource = $picture->getResource($picture::WORKER_GD);
 
             imagefilter($resource, IMG_FILTER_NEGATE);
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             // NEGATIVE IS NOT SUPPORTED IN IMAGICK
         }
     }

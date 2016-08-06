@@ -20,11 +20,9 @@ use Imagick;
  * Class Colorize
  * @package Palette\Effect
  */
-class Colorize extends PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+class Colorize extends PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array(
 
         'color' => NULL,
@@ -35,8 +33,8 @@ class Colorize extends PictureEffect {
      * Colorize constructor.
      * @param string $color
      */
-    public function __construct($color) {
-
+    public function __construct($color)
+    {
         $this->color = preg_replace('/\s+/', '', $color);
     }
 
@@ -45,21 +43,21 @@ class Colorize extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         // CALCULATE COLORIZE COLOR
-        if(strpos($this->color, '#') !== FALSE) {
-
+        if(strpos($this->color, '#') !== FALSE)
+        {
             $color = $this->hex2rgb($this->color);
         }
-        else {
-
+        else
+        {
             $color = explode(',', $this->color);
         }
 
         // GD VERSION IS BETTER AND IS PREFERRED
-        if($picture->isImagick() && !$picture->gdAvailable()) {
-
+        if($picture->isImagick() && !$picture->gdAvailable())
+        {
             $resource = $picture->getResource($picture::WORKER_IMAGICK);
 
             $quantumRange = $resource->getQuantumRange();
@@ -72,8 +70,8 @@ class Colorize extends PictureEffect {
             $resource->levelImage(0, $g, $quantumRange['quantumRangeLong'], Imagick::CHANNEL_GREEN);
             $resource->levelImage(0, $b, $quantumRange['quantumRangeLong'], Imagick::CHANNEL_BLUE);
         }
-        else {
-
+        else
+        {
             $resource = $picture->getResource($picture::WORKER_GD);
 
             $r = ceil($color[0]);
@@ -92,16 +90,16 @@ class Colorize extends PictureEffect {
      * @param $value
      * @return float
      */
-    protected function normalizeChannel($value) {
-
+    protected function normalizeChannel($value)
+    {
         $value = ceil($value / 2.55);
 
-        if($value > 0) {
-
+        if($value > 0)
+        {
             return $value / 5;
         }
-        else {
-
+        else
+        {
             return ($value + 100) / 100;
         }
     }

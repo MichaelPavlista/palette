@@ -19,11 +19,9 @@ use Palette\Picture;
  * Class Blur
  * @package Palette\Effect
  */
-class Blur extends PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+class Blur extends PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array(
 
         'strength' => NULL,
@@ -34,8 +32,8 @@ class Blur extends PictureEffect {
      * Blur constructor.
      * @param int $strength
      */
-    public function __construct($strength = 2) {
-
+    public function __construct($strength = 2)
+    {
         $this->strength = abs($strength);
     }
 
@@ -44,27 +42,27 @@ class Blur extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             // GIF IMAGES HAS PROBLEM WITH THIS FILTER
-            if(strtolower(pathinfo($picture->getImage(), PATHINFO_EXTENSION)) === 'gif') {
-
+            if(strtolower(pathinfo($picture->getImage(), PATHINFO_EXTENSION)) === 'gif')
+            {
                 return;
             }
 
-            for($i = 0; $i < $this->strength; $i++) {
-
+            for($i = 0; $i < $this->strength; $i++)
+            {
                 imagefilter($resource, IMG_FILTER_GAUSSIAN_BLUR);
             }
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource->blurImage(1 * $this->strength, 0.45 * $this->strength);
         }
     }

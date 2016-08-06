@@ -19,25 +19,25 @@ use Palette\Picture;
  * Class Enhance
  * @package Palette\Effect
  */
-class Enhance extends PictureEffect {
-
+class Enhance extends PictureEffect
+{
     /**
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             imagefilter($resource, IMG_FILTER_CONTRAST, -15);
             imagefilter($resource, IMG_FILTER_BRIGHTNESS, 8);
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource->modulateImage(108, 170, 100);
         }
     }

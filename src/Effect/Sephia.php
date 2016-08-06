@@ -19,25 +19,25 @@ use Palette\Picture;
  * Class Sephia
  * @package Palette\Effect
  */
-class Sephia extends PictureEffect {
-
+class Sephia extends PictureEffect
+{
     /**
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             imagefilter($resource, IMG_FILTER_GRAYSCALE);
             imagefilter($resource, IMG_FILTER_COLORIZE, 100, 60, 0);
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource->sepiaToneImage(80);
         }
     }

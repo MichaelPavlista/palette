@@ -19,24 +19,24 @@ use Palette\Picture;
  * Class Grayscale
  * @package Palette\Effect
  */
-class Grayscale extends PictureEffect {
-
+class Grayscale extends PictureEffect
+{
     /**
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             imagefilter($resource, IMG_FILTER_GRAYSCALE);
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource->modulateImage(100, 0, 100);
         }
     }

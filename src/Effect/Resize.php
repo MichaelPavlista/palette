@@ -20,36 +20,24 @@ use Palette\Picture;
  * Class Resize
  * @package Palette\Effect
  */
-class Resize extends PictureEffect {
-
-    /**
-     * @const image resize mode
-     */
+class Resize extends PictureEffect
+{
+    /** @const image resize mode */
     const MODE_FIT = 'fit';
 
-    /**
-     * @const mód image resize mode
-     */
+    /** @const image resize mode */
     const MODE_FILL = 'fill';
 
-    /**
-     * @const mód image resize mode
-     */
+    /** @const image resize mode */
     const MODE_STRETCH = 'stretch';
 
-    /**
-     * @const mód image resize mode
-     */
+    /** @const image resize mode */
     const MODE_CROP = 'crop';
 
-    /**
-     * @const mód image resize mode
-     */
+    /** @const image resize mode */
     const MODE_EXACT = 'exact';
 
-    /**
-     * @var array effect settings
-     */
+    /** @var array effect settings */
     protected $settings = array(
 
         'width'  => NULL,
@@ -68,10 +56,10 @@ class Resize extends PictureEffect {
      * @param int $resizeSmaller
      * @param string $color
      */
-    public function __construct($width, $height = NULL, $resizeMode = NULL, $resizeSmaller = 0, $color = NULL) {
-
-        if(!$height) {
-
+    public function __construct($width, $height = NULL, $resizeMode = NULL, $resizeSmaller = 0, $color = NULL)
+    {
+        if(!$height)
+        {
             $height = $width;
         }
 
@@ -87,15 +75,16 @@ class Resize extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
-        if($picture->isGd()) {
-
+    public function apply(Picture $picture)
+    {
+        if($picture->isGd())
+        {
             $resource = $this->resizeGd($picture->getResource());
+
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $this->resizeImagick($picture->getResource(), $picture);
         }
     }
@@ -107,41 +96,41 @@ class Resize extends PictureEffect {
      * @param int $height
      * @return array w,h
      */
-    public function getNewDimensions($width, $height) {
-
-        if(!$this->resizeSmaller && $this->height >= $height && $this->width >= $width) {
-
+    public function getNewDimensions($width, $height)
+    {
+        if(!$this->resizeSmaller && $this->height >= $height && $this->width >= $width)
+        {
             return parent::getNewDimensions($width, $height);
         }
 
-        if(in_array($this->resizeMode, array($this::MODE_CROP, $this::MODE_STRETCH, $this::MODE_EXACT))) {
-
+        if(in_array($this->resizeMode, array($this::MODE_CROP, $this::MODE_STRETCH, $this::MODE_EXACT)))
+        {
             return parent::getNewDimensions($this->width, $this->height);
         }
-        elseif($this->resizeMode === $this::MODE_FILL) {
-
+        elseif($this->resizeMode === $this::MODE_FILL)
+        {
             $ratioH = $this->height / $height;
             $ratioW = $this->width / $width;
 
             $widthFill  = max($width * $ratioH, $width * $ratioW);
             $heightFill = max($height * $ratioH, $height * $ratioW);
-            $ratio  = max($widthFill / $width, $heightFill / $height);
+            $ratio = max($widthFill / $width, $heightFill / $height);
 
             return parent::getNewDimensions(round($width * $ratio), round($height * $ratio));
         }
-        else {
-
+        else
+        {
             $pictureWidth  = $this->width;
             $pictureHeight = $this->height;
 
-            if($width > $pictureWidth || $height > $pictureHeight) {
-
-                if($width > $height) {
-
+            if($width > $pictureWidth || $height > $pictureHeight)
+            {
+                if($width > $height)
+                {
                     $pictureHeight = floor(($height / $width) * $pictureWidth);
                 }
-                elseif($width < $height) {
-
+                elseif($width < $height)
+                {
                     $pictureWidth = floor(($width / $height) * $pictureHeight);
                 }
             }
@@ -155,19 +144,19 @@ class Resize extends PictureEffect {
      * Resizing an image using Imagick
      * @param Imagick $imagick
      */
-    private function resizeImagick(Imagick $imagick, Picture $picture) {
-
-        if(!$this->resizeSmaller && $this->height > $imagick->getImageHeight() && $this->width > $imagick->getImageWidth()) {
-
+    private function resizeImagick(Imagick $imagick, Picture $picture)
+    {
+        if(!$this->resizeSmaller && $this->height > $imagick->getImageHeight() && $this->width > $imagick->getImageWidth())
+        {
             return;
         }
 
-        if($this->resizeMode === $this::MODE_CROP) {
-
+        if($this->resizeMode === $this::MODE_CROP)
+        {
             $imagick->cropThumbnailImage($this->width, $this->height);
         }
-        elseif($this->resizeMode === $this::MODE_FILL) {
-
+        elseif($this->resizeMode === $this::MODE_FILL)
+        {
             $ratioH = $this->height / $imagick->getImageHeight();
             $ratioW = $this->width / $imagick->getImageWidth();
 
@@ -177,12 +166,12 @@ class Resize extends PictureEffect {
 
             $imagick->scaleImage(round($imagick->getImageWidth() * $ratio), round($imagick->getImageHeight() * $ratio), TRUE);
         }
-        elseif($this->resizeMode === $this::MODE_STRETCH) {
-
+        elseif($this->resizeMode === $this::MODE_STRETCH)
+        {
             $imagick->scaleImage($this->width, $this->height, FALSE);
         }
-        elseif($this->resizeMode === $this::MODE_EXACT) {
-
+        elseif($this->resizeMode === $this::MODE_EXACT)
+        {
             $imagick->scaleImage($this->width, $this->height, TRUE);
 
             $rectangle = $picture->createImagick();
@@ -196,8 +185,8 @@ class Resize extends PictureEffect {
 
             $picture->setResource($rectangle);
         }
-        else {
-
+        else
+        {
             $imagick->scaleImage($this->width, $this->height, TRUE);
         }
     }
@@ -208,13 +197,13 @@ class Resize extends PictureEffect {
      * @param $resource
      * @return resource
      */
-    private function resizeGd($resource) {
-
+    private function resizeGd($resource)
+    {
         $origWidth  = imagesx($resource);
         $origHeight = imagesy($resource);
 
-        if(!$this->resizeSmaller && $this->height > $origHeight && $this->width > $origWidth) {
-
+        if(!$this->resizeSmaller && $this->height > $origHeight && $this->width > $origWidth)
+        {
             return $resource;
         }
 
@@ -224,8 +213,8 @@ class Resize extends PictureEffect {
         $realWidth  = $this->width;
         $realHeight = $this->height;
 
-        if($this->resizeMode === $this::MODE_FILL) {
-
+        if($this->resizeMode === $this::MODE_FILL)
+        {
             $ratioH = $this->height / $origHeight;
             $ratioW = $this->width / $origWidth;
 
@@ -236,8 +225,8 @@ class Resize extends PictureEffect {
             $realWidth  = round($origWidth * $ratio);
             $realHeight = round($origHeight * $ratio);
         }
-        elseif($this->resizeMode === $this::MODE_EXACT) {
-
+        elseif($this->resizeMode === $this::MODE_EXACT)
+        {
             $ratioW = $this->width / $origWidth;
             $ratioH = $this->height / $origHeight;
 
@@ -272,8 +261,8 @@ class Resize extends PictureEffect {
 
             return $pictureResized;
         }
-        elseif($this->resizeMode === $this::MODE_CROP) {
-
+        elseif($this->resizeMode === $this::MODE_CROP)
+        {
             if(($origWidth / $origHeight) > ($this->width / $this->height)) {
 
                 $widthTmp = $origHeight * $this->width / $this->height;
@@ -290,8 +279,8 @@ class Resize extends PictureEffect {
             }
         }
         // DEFAULT RESIZE METHOD FIT
-        elseif($this->resizeMode !== $this::MODE_STRETCH) {
-
+        elseif($this->resizeMode !== $this::MODE_STRETCH)
+        {
             $widthRatio  = $origWidth / $this->width;
             $heightRatio = $origHeight / $this->height;
 

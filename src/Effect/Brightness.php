@@ -19,11 +19,9 @@ use Palette\Picture;
  * Class Brightness
  * @package Palette\Effect
  */
-class Brightness extends PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+class Brightness extends PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array(
 
         'brightness' => NULL,
@@ -34,8 +32,8 @@ class Brightness extends PictureEffect {
      * Brightness constructor.
      * @param int $brightness
      */
-    public function __construct($brightness) {
-
+    public function __construct($brightness)
+    {
         $this->brightness = $brightness;
     }
 
@@ -44,18 +42,18 @@ class Brightness extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             imagefilter($resource, IMG_FILTER_BRIGHTNESS, ceil($this->brightness * 2.55));
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource->modulateImage(100 + $this->brightness, 100, 100);
         }
     }

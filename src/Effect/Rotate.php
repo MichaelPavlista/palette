@@ -21,11 +21,9 @@ use ImagickPixel;
  * Class Rotate
  * @package Palette\Effect
  */
-class Rotate extends PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+class Rotate extends PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array(
 
         'degrees'    => NULL,
@@ -38,8 +36,8 @@ class Rotate extends PictureEffect {
      * @param $degrees
      * @param string $background
      */
-    public function __construct($degrees, $background = NULL) {
-
+    public function __construct($degrees, $background = NULL)
+    {
         $this->degrees = $degrees;
         $this->background = $background;
     }
@@ -49,12 +47,12 @@ class Rotate extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             $transparentColor = imagecolorallocatealpha($resource, 0, 0, 0, 127);
 
             $resource = imagerotate($resource, -$this->degrees, $transparentColor);
@@ -62,8 +60,8 @@ class Rotate extends PictureEffect {
             imagesavealpha($resource, true);
 
             // ADD IMAGE BACKGROUND COLOR AFTER ROTATION
-            if($this->background && $this->background !== 'transparent') {
-
+            if($this->background && $this->background !== 'transparent')
+            {
                 $rgb   = $this->hex2rgb($this->background);
                 $color = imagecolorallocate($resource, $rgb[0], $rgb[1], $rgb[2]);
 
@@ -81,18 +79,19 @@ class Rotate extends PictureEffect {
                 imagedestroy($resource);
 
                 $picture->setResource($backgroundImage);
+
                 return;
             }
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource->rotateImage(new ImagickPixel('transparent'), $this->degrees);
 
             // ADD IMAGE BACKGROUND COLOR AFTER ROTATION (rotateImage is bugged)
-            if($this->background && $this->background !== 'transparent') {
-
+            if($this->background && $this->background !== 'transparent')
+            {
                 $background = $picture->createImagick();
                 $background->setFormat('png');
                 $background->newImage(
@@ -116,8 +115,8 @@ class Rotate extends PictureEffect {
      * @param int $height
      * @return array w,h
      */
-    public function getNewDimensions($width, $height) {
-
+    public function getNewDimensions($width, $height)
+    {
         $radians = pi() * $this->degrees / 180;
 
         $NWL = $width * cos($radians);

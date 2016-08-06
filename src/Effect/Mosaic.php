@@ -19,16 +19,16 @@ use Palette\Picture;
  * Class Mosaic
  * @package Palette\Effect
  */
-class Mosaic extends PictureEffect {
-
+class Mosaic extends PictureEffect
+{
     /**
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
-        if($picture->isGd() || $picture->gdAvailable()) {
-
+    public function apply(Picture $picture)
+    {
+        if($picture->isGd() || $picture->gdAvailable())
+        {
             $resource = $picture->getResource($picture::WORKER_GD);
 
             imagefilter($resource, IMG_FILTER_MEAN_REMOVAL);
@@ -36,8 +36,8 @@ class Mosaic extends PictureEffect {
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             // MOSAIC IS NOT SUPPORTED IN IMAGICK
         }
     }

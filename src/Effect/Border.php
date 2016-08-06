@@ -19,11 +19,9 @@ use Palette\Picture;
  * Class Border
  * @package Palette\Effect
  */
-class Border extends PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+class Border extends PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array(
 
         'width'  => NULL,
@@ -38,8 +36,8 @@ class Border extends PictureEffect {
      * @param int $height
      * @param string $color
      */
-    public function __construct($width = 1, $height = 1, $color = '#000') {
-
+    public function __construct($width = 1, $height = 1, $color = '#000')
+    {
         $this->width  = $width;
         $this->height = $height;
         $this->color  = $color;
@@ -50,12 +48,12 @@ class Border extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             $resize = new Resize(
 
                 imagesx($resource) - $this->width  * 2,
@@ -94,8 +92,8 @@ class Border extends PictureEffect {
 
             $picture->setResource($borderedImage);
         }
-        else {
-
+        else
+        {
             $width  = $resource->getImageWidth();
             $height = $resource->getImageHeight();
 

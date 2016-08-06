@@ -20,18 +20,18 @@ use Imagick;
  * Class Sharpen
  * @package Palette\Effect
  */
-class Sharpen extends PictureEffect {
-
+class Sharpen extends PictureEffect
+{
     /**
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             $sharpen = array(
 
                 array(0.0, -1.0, 0.0),
@@ -43,8 +43,8 @@ class Sharpen extends PictureEffect {
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource->adaptiveSharpenImage(10, 2, Imagick::CHANNEL_RED);
             $resource->adaptiveSharpenImage(10, 2, Imagick::CHANNEL_GREEN);
             $resource->adaptiveSharpenImage(10, 2, Imagick::CHANNEL_BLUE);

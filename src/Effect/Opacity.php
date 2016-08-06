@@ -20,11 +20,9 @@ use Imagick;
  * Class Opacity
  * @package Palette\Effect
  */
-class Opacity extends PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+class Opacity extends PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array(
 
         'opacity' => NULL,
@@ -35,8 +33,8 @@ class Opacity extends PictureEffect {
      * Opacity constructor.
      * @param float $opacity
      */
-    public function __construct($opacity) {
-
+    public function __construct($opacity)
+    {
         $this->opacity = $opacity;
     }
 
@@ -45,12 +43,12 @@ class Opacity extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         $resource = $picture->getResource();
 
-        if($picture->isGd()) {
-
+        if($picture->isGd())
+        {
             imagesavealpha($resource, TRUE);
             imagealphablending($resource, FALSE);
 
@@ -62,31 +60,31 @@ class Opacity extends PictureEffect {
 
             for($x = 0; $x < $w; $x++) {
 
-                for($y = 0; $y < $h; $y++) {
-
+                for($y = 0; $y < $h; $y++)
+                {
                     $alpha = (imagecolorat($resource, $x, $y) >> 24 ) & 0xFF;
 
-                    if($alpha < $minimalAlpha) {
-
+                    if($alpha < $minimalAlpha)
+                    {
                         $minimalAlpha = $alpha;
                     }
                 }
             }
 
             // MODIFY IMAGE PIXELS
-            for($x = 0; $x < $w; $x++) {
-
-                for($y = 0; $y < $h; $y++) {
-
+            for($x = 0; $x < $w; $x++)
+            {
+                for($y = 0; $y < $h; $y++)
+                {
                     $colorXY = imagecolorat($resource, $x, $y);
                     $alpha = ($colorXY >> 24) & 0xFF;
 
-                    if($minimalAlpha !== 127) {
-
+                    if($minimalAlpha !== 127)
+                    {
                         $alpha = 127 + 127 * $this->opacity * ($alpha - 127) / (127 - $minimalAlpha);
                     }
-                    else {
-
+                    else
+                    {
                         $alpha += 127 * $this->opacity;
                     }
 
@@ -106,10 +104,10 @@ class Opacity extends PictureEffect {
 
             $picture->setResource($resource);
         }
-        else {
-
-            if(!$resource->getImageAlphaChannel()) {
-
+        else
+        {
+            if(!$resource->getImageAlphaChannel())
+            {
                 $resource->setImageAlphaChannel(Imagick::ALPHACHANNEL_ACTIVATE);
             }
 

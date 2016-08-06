@@ -19,25 +19,25 @@ use Palette\Picture;
  * Class EdgeDetect
  * @package Palette\Effect
  */
-class EdgeDetect extends PictureEffect {
-
+class EdgeDetect extends PictureEffect
+{
     /**
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         // GD VERSION IS BETTER AND IS PREFERRED
-        if($picture->isGd() || $picture->gdAvailable()) {
-
+        if($picture->isGd() || $picture->gdAvailable())
+        {
             $resource = $picture->getResource($picture::WORKER_GD);
 
             imagefilter($resource, IMG_FILTER_EDGEDETECT);
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource = $picture->getResource($picture::WORKER_IMAGICK);
             $resource->convolveImage(array(
 

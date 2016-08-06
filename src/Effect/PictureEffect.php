@@ -19,11 +19,9 @@ use ReflectionMethod;
 /**
  * Class PictureEffect
  */
-abstract class PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+abstract class PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array();
 
 
@@ -37,7 +35,8 @@ abstract class PictureEffect {
     /**
      * PictureEffect constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
 
     }
 
@@ -46,8 +45,8 @@ abstract class PictureEffect {
      * Restore effect state from array
      * @param array $settings
      */
-    public function restore(array $settings = array()) {
-
+    public function restore(array $settings = array())
+    {
         $settings = array_values($settings);
 
         $reflection = new ReflectionMethod(get_class($this), '__construct');
@@ -55,15 +54,15 @@ abstract class PictureEffect {
 
         $index = 0;
 
-        foreach($this->settings as &$setting) {
-
-            if($alreadySet > $index) {
-
+        foreach($this->settings as &$setting)
+        {
+            if($alreadySet > $index)
+            {
                 continue;
             }
 
-            if(array_key_exists($index, $settings)) {
-
+            if(array_key_exists($index, $settings))
+            {
                 $setting = $settings[$index] === '' ? NULL : $settings[$index];
             }
 
@@ -78,8 +77,8 @@ abstract class PictureEffect {
      * @param int $height
      * @return array w,h
      */
-    public function getNewDimensions($width, $height) {
-
+    public function getNewDimensions($width, $height)
+    {
         return array(
 
             'w' => $width,
@@ -93,10 +92,10 @@ abstract class PictureEffect {
      * @param string $name
      * @return mixed
      */
-    final public function __get($name) {
-
-        if($this->__isset($name)) {
-
+    final public function __get($name)
+    {
+        if($this->__isset($name))
+        {
             return $this->settings[$name];
         }
 
@@ -109,14 +108,14 @@ abstract class PictureEffect {
      * @param string $name
      * @param mixed $value
      */
-    final public function __set($name, $value) {
-
-        if($this->__isset($name)) {
-
+    final public function __set($name, $value)
+    {
+        if($this->__isset($name))
+        {
             $this->settings[$name] = $value;
         }
-        else {
-
+        else
+        {
             trigger_error('Unknown effect parameter: ' . $name, E_USER_WARNING);
         }
     }
@@ -127,8 +126,8 @@ abstract class PictureEffect {
      * @param $name
      * @return bool
      */
-    final public function __isset($name) {
-
+    final public function __isset($name)
+    {
         return array_key_exists($name, $this->settings);
     }
 
@@ -137,8 +136,8 @@ abstract class PictureEffect {
      * Delete effect setting value
      * @param $name
      */
-    public function __unset($name) {
-
+    public function __unset($name)
+    {
         $this->settings[$name] = NULL;
     }
 
@@ -149,25 +148,25 @@ abstract class PictureEffect {
      * @param bool $returnString
      * @return array|string
      */
-    public function hex2rgb($hex, $returnString = FALSE) {
-
+    public function hex2rgb($hex, $returnString = FALSE)
+    {
         $hex = str_replace('#', '', $hex);
 
-        if(strlen($hex) == 3) {
-
+        if(strlen($hex) == 3)
+        {
             $r = hexdec(substr($hex,0,1).substr($hex,0,1));
             $g = hexdec(substr($hex,1,1).substr($hex,1,1));
             $b = hexdec(substr($hex,2,1).substr($hex,2,1));
         }
-        else {
-
+        else
+        {
             $r = hexdec(substr($hex,0,2));
             $g = hexdec(substr($hex,2,2));
             $b = hexdec(substr($hex,4,2));
         }
 
-        if($returnString) {
-
+        if($returnString)
+        {
             return implode(', ', array($r, $g, $b));
         }
 
@@ -179,8 +178,8 @@ abstract class PictureEffect {
      * Renders Palette image query for current effect
      * @return string
      */
-    public function __toString() {
-
+    public function __toString()
+    {
         $arguments = ';' . implode(';', $this->settings);
 
         return substr(get_class($this), strrpos(get_class($this), '\\') + 1) . substr($arguments, 0, strlen($arguments));

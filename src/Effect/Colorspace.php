@@ -20,26 +20,26 @@ use Imagick;
  * Class Colorspace
  * @package Palette\Effect
  */
-class Colorspace extends PictureEffect {
-
+class Colorspace extends PictureEffect
+{
     /**
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
-        if($picture->imagickAvailable()) {
-
+    public function apply(Picture $picture)
+    {
+        if($picture->imagickAvailable())
+        {
             $image = $picture->getResource(Picture::WORKER_IMAGICK);
 
-            if($image->getImageColorspace() == Imagick::COLORSPACE_CMYK) {
-
+            if($image->getImageColorspace() == Imagick::COLORSPACE_CMYK)
+            {
                 $profiles = $image->getImageProfiles('*', FALSE);
 
                 $path = realpath(__DIR__ . '/../Profiles/') . DIRECTORY_SEPARATOR;
 
-                if(array_search('icc', $profiles) === false) {
-
+                if(array_search('icc', $profiles) === FALSE)
+                {
                     $image->profileImage('icc', file_get_contents($path . 'USWebUncoated.icc'));
                 }
 
@@ -48,8 +48,8 @@ class Colorspace extends PictureEffect {
 
             $image->stripImage();
         }
-        else {
-
+        else
+        {
             // COLORSPACE MANAGEMENT NOT AVAILABLE IN GD!
         }
     }

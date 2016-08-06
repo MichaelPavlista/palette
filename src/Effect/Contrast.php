@@ -19,11 +19,9 @@ use Palette\Picture;
  * Class Contrast
  * @package Palette\Effect
  */
-class Contrast extends PictureEffect {
-
-    /**
-     * @var array effect settings
-     */
+class Contrast extends PictureEffect
+{
+    /** @var array effect settings */
     protected $settings = array(
 
         'contrast' => NULL,
@@ -34,8 +32,8 @@ class Contrast extends PictureEffect {
      * Contrast constructor.
      * @param int $contrast
      */
-    public function __construct($contrast) {
-
+    public function __construct($contrast)
+    {
         $this->contrast = $contrast;
     }
 
@@ -44,19 +42,19 @@ class Contrast extends PictureEffect {
      * Apply effect on picture
      * @param Picture $picture
      */
-    public function apply(Picture $picture) {
-
+    public function apply(Picture $picture)
+    {
         // GD VERSION IS BETTER AND IS PREFERRED
-        if($picture->isGd() || $picture->gdAvailable()) {
-
+        if($picture->isGd() || $picture->gdAvailable())
+        {
             $resource = $picture->getResource($picture::WORKER_GD);
 
             imagefilter($resource, IMG_FILTER_CONTRAST, $this->contrast * -1);
 
             $picture->setResource($resource);
         }
-        else {
-
+        else
+        {
             $resource = $picture->getResource($picture::WORKER_IMAGICK);
 
             $resource->sigmoidalContrastImage(FALSE, $this->contrast / 4, 0);

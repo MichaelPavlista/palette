@@ -8,8 +8,8 @@ use Palette\Picture;
  * Interface IPictureLoader
  * @package Palette\Generator
  */
-interface IPictureLoader {
-
+interface IPictureLoader
+{
     /**
      * Allows override picture loading with palette picture generator
      * @param string $imagePath path to image file

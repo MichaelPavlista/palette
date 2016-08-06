@@ -17,8 +17,8 @@ namespace Palette\Generator;
  * Interface IServerGenerator
  * @package Palette\Generator
  */
-interface IServerGenerator extends IPictureGenerator {
-
+interface IServerGenerator extends IPictureGenerator
+{
     /**
      * Execute server generator backend.
      * @return void

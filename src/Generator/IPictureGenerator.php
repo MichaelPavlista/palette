@@ -20,8 +20,8 @@ use Palette\Exception;
  * Interface IPictureGenerator
  * @package Palette\Generator
  */
-interface IPictureGenerator {
-
+interface IPictureGenerator
+{
     /**
      * Get picture instance for transformation performs by this picture generator.
      * @param string $image path to image file

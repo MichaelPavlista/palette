@@ -21,37 +21,24 @@ use Palette\Picture;
  * Implementation of IPictureGenerator which generates the desired image variants at runtime the current PHP script.
  * @package Palette\Generator
  */
-class CurrentExecution implements IPictureGenerator {
-
-    /**
-     * @var string absolute path to directory for storage generated image variants
-     */
+class CurrentExecution implements IPictureGenerator
+{
+    /** @var string absolute path to directory for storage generated image variants */
     protected $storagePath;
 
-    /**
-     * @var string absolute url to directory of generated images
-     */
+    /** @var string absolute url to directory of generated images */
     protected $storageUrl;
 
-    /**
-     * Path to website directory root (see documentation)
-     * @var string|null
-     */
+    /** @var string|null Path to website directory root (see documentation) */
     protected $basePath;
 
-    /**
-     * @var array palette query templates storage
-     */
+    /** @var array palette query templates storage */
     protected $template = array();
 
-    /**
-     * @var string|null absolute path to fallback image
-     */
+    /** @var string|null absolute path to fallback image */
     protected $fallbackImage;
 
-    /**
-     * @var IPictureLoader witch can modify or change loaded picture
-     */
+    /** @var IPictureLoader witch can modify or change loaded picture */
     protected $pictureLoader;
 
 
@@ -62,16 +49,16 @@ class CurrentExecution implements IPictureGenerator {
      * @param string|null $basePath path to website directory root (see documentation)
      * @throws Exception
      */
-    public function __construct($storagePath, $storageUrl, $basePath = NULL) {
-
+    public function __construct($storagePath, $storageUrl, $basePath = NULL)
+    {
         $storagePath = realpath($storagePath);
 
-        if(!file_exists($storagePath)) {
-
+        if(!file_exists($storagePath))
+        {
             throw new Exception('Image storagePath does not exists');
         }
-        elseif(!is_writable($storagePath)) {
-
+        elseif(!is_writable($storagePath))
+        {
             throw new Exception("Image storagePath '$storagePath' is not writable");
         }
 
@@ -87,10 +74,10 @@ class CurrentExecution implements IPictureGenerator {
      * @param string|null $worker Palette\Picture worker constant
      * @return Picture
      */
-    public function loadPicture($image, $worker = NULL) {
-
-        if($this->pictureLoader) {
-            
+    public function loadPicture($image, $worker = NULL)
+    {
+        if($this->pictureLoader)
+        {
             return $this->pictureLoader->loadPicture($image, $this, $worker);
         }
 
@@ -103,8 +90,8 @@ class CurrentExecution implements IPictureGenerator {
      * @param IPictureLoader $pictureLoader
      * @throws Exception
      */
-    public function setPictureLoader(IPictureLoader $pictureLoader) {
-
+    public function setPictureLoader(IPictureLoader $pictureLoader)
+    {
         $this->pictureLoader = $pictureLoader;
     }
 
@@ -114,12 +101,12 @@ class CurrentExecution implements IPictureGenerator {
      * @param Picture $picture
      * @return void
      */
-    public function save(Picture $picture) {
-
+    public function save(Picture $picture)
+    {
         $pictureFile = $this->getPath($picture);
 
-        if(!$this->isFileActual($pictureFile, $picture)) {
-
+        if(!$this->isFileActual($pictureFile, $picture))
+        {
             $picture->save($pictureFile);
         }
     }
@@ -131,8 +118,8 @@ class CurrentExecution implements IPictureGenerator {
      * @param bool $otherVariants remove also other variants of image?
      * @return bool
      */
-    public function remove(Picture $picture, $otherVariants = FALSE) {
-
+    public function remove(Picture $picture, $otherVariants = FALSE)
+    {
         return FALSE;
     }
 
@@ -143,8 +130,8 @@ class CurrentExecution implements IPictureGenerator {
      * @param Picture $picture
      * @return string
      */
-    public function getPath(Picture $picture) {
-
+    public function getPath(Picture $picture)
+    {
         return $this->storagePath . '/' . str_replace($this->basePath, '', $this->getFileName($picture));
     }
 
@@ -154,8 +141,8 @@ class CurrentExecution implements IPictureGenerator {
      * @param Picture $picture
      * @return string
      */
-    public function getUrl(Picture $picture) {
-
+    public function getUrl(Picture $picture)
+    {
         return $this->storageUrl . str_replace($this->basePath, '', $this->getFileName($picture));
     }
 
@@ -166,16 +153,16 @@ class CurrentExecution implements IPictureGenerator {
      * @param Picture $picture
      * @return bool|null
      */
-    protected function isFileActual($file, Picture $picture) {
-
-        if(file_exists($file)) {
-
-            if(@filemtime($file) === @filemtime($picture->getImage())) {
-
+    protected function isFileActual($file, Picture $picture)
+    {
+        if(file_exists($file))
+        {
+            if(@filemtime($file) === @filemtime($picture->getImage()))
+            {
                 return TRUE;
             }
-            else {
-
+            else
+            {
                 return NULL;
             }
         }
@@ -189,12 +176,12 @@ class CurrentExecution implements IPictureGenerator {
      * @param Picture $picture
      * @return string
      */
-    public function getFileName(Picture $picture) {
-
+    public function getFileName(Picture $picture)
+    {
         $imageFile = $picture->getImage();
 
         return pathinfo($imageFile, PATHINFO_FILENAME) . '.' .
-        sprintf("%u", crc32($picture->getImageQuery())) . '.' . pathinfo($imageFile, PATHINFO_EXTENSION);
+            sprintf("%u", crc32($picture->getImageQuery())) . '.' . pathinfo($imageFile, PATHINFO_EXTENSION);
     }
 
 
@@ -203,13 +190,14 @@ class CurrentExecution implements IPictureGenerator {
      * @param string $fallbackImage absolute or relative path to fallback image.
      * @throws Exception
      */
-    public function setFallbackImage($fallbackImage) {
-
+    public function setFallbackImage($fallbackImage)
+    {
         $fallbackImagePath = realpath($fallbackImage);
 
-        if(file_exists($fallbackImagePath) && is_readable($fallbackImagePath)) {
-
+        if(file_exists($fallbackImagePath) && is_readable($fallbackImagePath))
+        {
             $this->fallbackImage = $fallbackImagePath;
+
             return;
         }
 
@@ -221,8 +209,8 @@ class CurrentExecution implements IPictureGenerator {
      * Get fallback image witch is used when requred image is not found.
      * @return string|null
      */
-    public function getFallbackImage() {
-
+    public function getFallbackImage()
+    {
         return $this->fallbackImage;
     }
 
@@ -233,8 +221,8 @@ class CurrentExecution implements IPictureGenerator {
      * @param string $imageQuery
      * @return void
      */
-    public function setTemplateQuery($template, $imageQuery) {
-
+    public function setTemplateQuery($template, $imageQuery)
+    {
         $this->template[$template] = $imageQuery;
     }
 
@@ -244,10 +232,10 @@ class CurrentExecution implements IPictureGenerator {
      * @param string $template
      * @return string|bool
      */
-    public function getTemplateQuery($template) {
-
-        if(isset($this->template[$template])) {
-
+    public function getTemplateQuery($template)
+    {
+        if(isset($this->template[$template]))
+        {
             return $this->template[$template];
         }
 
@@ -260,8 +248,8 @@ class CurrentExecution implements IPictureGenerator {
      * @param string $slash
      * @return string
      */
-    protected function unifyPath($path, $slash = DIRECTORY_SEPARATOR) {
-
+    protected function unifyPath($path, $slash = DIRECTORY_SEPARATOR)
+    {
         return preg_replace('/\\'. $slash .'+/', $slash, str_replace(array('/', "\\"), $slash, $path));
     }
 

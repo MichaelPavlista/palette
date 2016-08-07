@@ -523,6 +523,10 @@ class Picture
         {
             $this->quality = $quality;
         }
+        else
+        {
+            trigger_error('Picture quality must be numeric', E_USER_WARNING);
+        }
     }
 
 
@@ -535,6 +539,10 @@ class Picture
         if(is_bool($progressive))
         {
             $this->progressive = $progressive;
+        }
+        else
+        {
+            trigger_error('Picture progressive mode must be boolean', E_USER_WARNING);
         }
     }
 
@@ -555,7 +563,7 @@ class Picture
         }
         else
         {
-            trigger_error('Image file not defined', E_USER_WARNING);
+            trigger_error('Image file to save is not defined', E_USER_WARNING);
         }
     }
 

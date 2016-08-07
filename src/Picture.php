@@ -527,6 +527,19 @@ class Picture
 
 
     /**
+     * Set picture saving mode as progressive image?
+     * @param bool $progressive
+     */
+    public function setProgressive($progressive = TRUE)
+    {
+        if(is_bool($progressive))
+        {
+            $this->progressive = $progressive;
+        }
+    }
+
+
+    /**
      * Save the edited image to the repository, or specific location
      * @param null $file
      */

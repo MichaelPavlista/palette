@@ -152,8 +152,15 @@ class Server extends CurrentExecution implements IServerGenerator
 
         // SEND REQUEST WITHOUT WAITING
         $protocol = isset($_SERVER['HTTPS']) ? 'ssl://' : '';
+        $safePort = isset($_SERVER['HTTPS']) ? 443 : 80;
 
-        $fp = fsockopen($protocol . $request['host'], isset($request['port']) ? $request['port'] : 80, $errNo, $errStr, 60);
+        // HTTPS WORKAROUND
+        if($request['port'] == 80 && $safePort == 443)
+        {
+            $request['port'] = $safePort;
+        }
+
+        $fp = fsockopen($protocol . $request['host'], $request['port'], $errNo, $errStr, 60);
 
         $command  = "POST " . $request['path'] . " HTTP/1.1\r\n";
         $command .= "Host: " . $request['host'] . "\r\n";

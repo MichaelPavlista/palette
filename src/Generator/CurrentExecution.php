@@ -178,10 +178,17 @@ class CurrentExecution implements IPictureGenerator
      */
     public function getFileName(Picture $picture)
     {
-        $imageFile = $picture->getImage();
+        $sourceImage = $picture->getImage();
 
-        return pathinfo($imageFile, PATHINFO_FILENAME) . '.' .
-            sprintf("%u", crc32($picture->getImageQuery())) . '.' . pathinfo($imageFile, PATHINFO_EXTENSION);
+        $fileName = pathinfo($sourceImage, PATHINFO_FILENAME) . '.' .
+            sprintf('%u', crc32($picture->getImageQuery())) . '.';
+
+        if($created = filemtime($sourceImage))
+        {
+            $fileName .= $created . '.';
+        }
+
+        return $fileName . pathinfo($sourceImage, PATHINFO_EXTENSION);
     }
 
 

@@ -188,7 +188,7 @@ class CurrentExecution implements IPictureGenerator
             $fileName .= $created . '.';
         }
 
-        return $fileName . pathinfo($sourceImage, PATHINFO_EXTENSION);
+        return $fileName . pathinfo($sourceImage, PATHINFO_EXTENSION) . ($picture->isWebp() ? '.webp' : '');
     }
 
 

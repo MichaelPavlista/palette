@@ -43,6 +43,9 @@ class Picture
     /** @var null|bool save as progressive image? */
     protected $progressive = NULL;
 
+    /** @var bool use WebP format */
+    protected $webp = FALSE;
+
     /** @var array applied effects on picture */
     protected $effect = array();
 
@@ -117,6 +120,14 @@ class Picture
                     if($effectClass === 'Palette\Effect\Quality' && isset($effectQuery[1]))
                     {
                         $this->quality($effectQuery[1]);
+
+                        continue;
+                    }
+
+                    // SUPPORT WEBP ARGUMENT IN PALETTE QUERY
+                    if($effectClass === 'Palette\Effect\WebP')
+                    {
+                        $this->webp = TRUE;
 
                         continue;
                     }
@@ -457,6 +468,11 @@ class Picture
 
         $command .= 'Quality;' . $this->quality . '&';
 
+        if($this->webp)
+        {
+            $command .= 'WebP&';
+        }
+
         if($this->progressive)
         {
             $command .= 'Progressive&';
@@ -599,7 +615,16 @@ class Picture
 
         if($this->isGd())
         {
-            if($extension === 'png')
+            if($this->isWebp())
+            {
+                if($this->progressive)
+                {
+                    imageinterlace($this->resource, TRUE);
+                }
+
+                imagewebp($this->resource, $file, $this->quality);
+            }
+            elseif($extension === 'png')
             {
                 if($this->progressive)
                 {
@@ -702,7 +727,17 @@ class Picture
         }
         else
         {
-            if($extension === 'jpg')
+            if($this->isWebp())
+            {
+                if($this->progressive)
+                {
+                    $this->resource->setInterlaceScheme(Imagick::INTERLACE_PLANE);
+                }
+                $this->resource->setImageFormat('webp');
+
+                $this->resource->writeImage($file);
+            }
+            elseif($extension === 'jpg')
             {
                 $background = $this->createImagick();
                 $background->newImage(
@@ -856,6 +891,14 @@ class Picture
             'w' => $width,
             'h' => $height,
         );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWebp(): bool
+    {
+        return $this->webp;
     }
 
 }

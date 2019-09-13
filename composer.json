@@ -14,7 +14,8 @@
   "require": {
     "php": ">=5.3.0",
     "ext-gd": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ext-openssl": "*",
   },
   "require-dev": {
     "nette/tester": "~1.3",

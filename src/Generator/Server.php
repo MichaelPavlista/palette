@@ -13,6 +13,7 @@
 
 namespace Palette\Generator;
 
+use Palette\DecryptionException;
 use Palette\Exception;
 use Palette\Picture;
 
@@ -76,7 +77,10 @@ class Server extends CurrentExecution implements IServerGenerator
 
         if($variantActual === FALSE)
         {
-            return $url . '?imageQuery=' . urlencode($picture->getImage() . '@' . $picture->getImageQuery());
+            $queryString = $picture->getImage() . '@' . $picture->getImageQuery();
+            $queryString = openssl_encrypt($queryString, $this->cypherMethod, $this->key, 0, $this->iv);
+            $queryString = urlencode($queryString);
+            return $url . '?imageQuery=' . $queryString;
         }
         elseif($variantActual === NULL)
         {
@@ -100,7 +104,15 @@ class Server extends CurrentExecution implements IServerGenerator
     {
         if(!empty($_GET['imageQuery']))
         {
-            $picture  = $this->loadPicture($_GET['imageQuery']);
+            $query = $_GET['imageQuery'];
+            $query = openssl_decrypt($query, $this->cypherMethod, $this->key, 0, $this->iv);
+
+            if ($query === FALSE)
+            {
+                throw new DecryptionException();
+            }
+
+            $picture  = $this->loadPicture($query);
             $savePath = $this->getPath($picture);
 
             $picture->save($savePath);

@@ -899,6 +899,16 @@ class Picture
 
 
     /**
+     * Mají se vždy verze obrázku uložit jako WebP?
+     * @param bool $forceWebP
+     */
+    public function forceWebP($forceWebP = TRUE)
+    {
+        $this->webp = (bool) $forceWebP;
+    }
+
+
+    /**
      * Má se obrázek uložit jako Webp?
      * @return bool
      */

@@ -190,7 +190,15 @@ class CurrentExecution implements IPictureGenerator
             $fileName .= $created . '.';
         }
 
-        return $fileName . pathinfo($sourceImage, PATHINFO_EXTENSION) . ($picture->isWebp() ? '.webp' : '');
+        // Create picture extension.
+        $pictureExtension = pathinfo($sourceImage, PATHINFO_EXTENSION);
+
+        if($picture->isWebp() && strtolower($pictureExtension) !== 'webp')
+        {
+            $pictureExtension .= '.webp';
+        }
+
+        return $fileName . $pictureExtension;
     }
 
 

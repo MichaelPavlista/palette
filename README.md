@@ -7,7 +7,7 @@ PHP rozšíření umožňující pokročilou manipulaci s obrázky, vytváření
 - Generování varianty obrázku se neprovádí při běhu spušťěného PHP scriptu, Palette pouze **vygeneruje url** adresu na které bude požadovaná varianta dostupná. Až při naštívění této url se tato varianta (pokud nebyla již vytvořena dříve) vygeneruje.   Díky tomuto principu vytváření variant obrázku není problém na jedné stránce generovat klidně 100+ variant bez toho, aby PHP došly prostředky, nebo načítání stránky trvalo delší dobu.
 
 ## Instalace a nastavení
-####1. Palette naistalujeme do projektu nejlépe pomocí composeru.
+#### 1. Palette naistalujeme do projektu nejlépe pomocí composeru.
 
      php composer.phar require pavlista/palette
 
@@ -46,7 +46,7 @@ $palette->serverResponse();
 #### 4. Přesměrujeme neexistující soubory a adresáře na backend
 V umístění, které jsme si zvolily jako úložiště nastavíme přesměrování všech neexistujících souborů a adresářů na vytvořený soubor s backendem.
 
-#####Vorové Nastavení v Apache
+##### Vzorové Nastavení v Apache
 Do složky úložiště přidáme následující soubor .httacess:
 ```apache
 #<IfModule mod_rewrite.c>

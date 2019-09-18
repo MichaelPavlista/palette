@@ -26,7 +26,8 @@ $generator = new Palette\Generator\Server(
 
     'files/thumbs', // storagePath
     'http://www.example.com/files/thumbs/', // storageUrl
-    '/var/www/example.com/' // basePath
+    '/var/www/example.com/', // basePath
+    '%signingKey%'
 );
 
 $palette = new Palette\Service($generator);

@@ -18,6 +18,7 @@ Třída má pouze jeden povinný parametr a to instanci třídy, která implemen
 - **storagePath**: Relativní nebo absolutní cesta ke složce do které se mají vygenerované miniatury a obrázky ukládat. Tato složka musí existovat a musí být do ní možné zapisovat!
 - **storageUrl** Absolutní url adresa s lomítkem na konci na které je složka s miniatury veřejně dostupná.
 - **basePath:** Absolutní cesta k document rootu webu. Tento parametr je nepovinný.
+- **signingKey:** Jedinečný řetězec, kterým se podepisují požadavky.
 
 **Vytvoření instance Palette by tedy mělo vypadat takto:**
 

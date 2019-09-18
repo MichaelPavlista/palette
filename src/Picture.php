@@ -418,6 +418,9 @@ class Picture
 
             case 'image/png':
                 return $this->normalizeGdResource(imagecreatefrompng($imageFile));
+
+            case 'image/webp':
+                return $this->normalizeGdResource(imagecreatefromwebp($imageFile));
         }
 
         throw new Exception('GD resource not supported image extension');
@@ -569,11 +572,11 @@ class Picture
      */
     public function save($file = NULL)
     {
-        if(is_null($file) && $this->storage)
+        if($file === NULL && $this->storage)
         {
             $this->storage->save($this);
         }
-        elseif(!is_null($file))
+        elseif($file !== NULL)
         {
             $this->savePicture($file);
         }
@@ -615,7 +618,7 @@ class Picture
 
         if($this->isGd())
         {
-            if($this->isWebp())
+            if($extension === 'webp' || $this->isWebp())
             {
                 if($this->progressive)
                 {
@@ -727,7 +730,7 @@ class Picture
         }
         else
         {
-            if($this->isWebp())
+            if($extension === 'webp' || $this->isWebp())
             {
                 if($this->progressive)
                 {

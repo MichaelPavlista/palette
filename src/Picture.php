@@ -732,14 +732,31 @@ class Picture
         {
             if($extension === 'webp' || $this->isWebp())
             {
-                if($this->progressive)
+                try
                 {
-                    $this->resource->setInterlaceScheme(Imagick::INTERLACE_PLANE);
+                    if($this->progressive)
+                    {
+                        $this->resource->setInterlaceScheme(Imagick::INTERLACE_PLANE);
+                    }
+                    $this->resource->setImageFormat('webp');
+
+                    $this->resource->writeImage($file);
                 }
+                catch (\ImagickException $e)
+                {
+                    // Falback to save webp image
+                    if($e->getMessage() === 'Unable to set image format')
+                    {
+                        $imageGd = $this->convertResource($this::WORKER_GD);
 
-                $this->resource->setImageFormat('webp');
+                        if($this->progressive)
+                        {
+                            imageinterlace($imageGd, TRUE);
+                        }
 
-                $this->resource->writeImage($file);
+                        imagewebp($imageGd, $file, $this->quality);
+                    }
+                }
             }
             elseif($extension === 'jpg')
             {

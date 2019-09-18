@@ -38,10 +38,10 @@ class Picture
     protected $image;
 
     /** @var int image compress quality */
-    protected $quality = 100;
+    protected $quality = 90;
 
     /** @var null|bool save as progressive image? */
-    protected $progressive = NULL;
+    protected $progressive = TRUE;
 
     /** @var bool use WebP format */
     protected $webp = FALSE;

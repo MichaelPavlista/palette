@@ -1,9 +1,9 @@
 {
   "name": "pavlista/palette",
+  "license": "MIT",
   "description": "An on-demand image handling and manipulation library",
   "keywords": ["image", "thumbnail", "watermark", "gd", "imagick", "nette"],
   "homepage": "https://github.com/MichaelPavlista/palette",
-  "license": ["MIT"],
   "authors": [
     {
       "name": "Michael Pavlista",
@@ -15,7 +15,7 @@
     "php": ">=5.3.0",
     "ext-gd": "*",
     "ext-mbstring": "*",
-    "ext-openssl": "*",
+    "ext-json": "*"
   },
   "require-dev": {
     "nette/tester": "~1.3",

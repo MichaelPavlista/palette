@@ -1,0 +1,120 @@
+FROM debian:9-slim
+
+MAINTAINER Michael Pavlista <michael@pavlista.cz>
+
+# Nastavení Debianu
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Ošetření chyby: invoke-rc.d: policy-rc.d denied execution of start.
+RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
+
+# Vytvoření složky pro logy
+RUN mkdir /var/log/docker/ && chmod 777 /var/log/docker/
+
+# Aktualizace definice balíčků a instalace základních balíčků
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends dialog apt-utils git mc htop nmap wget curl \
+    apt-transport-https ca-certificates openssh-client
+
+# Instalace a nastavení autoSSH
+RUN apt-get update && apt-get install -y --no-install-recommends autossh
+
+# Instalace a nastavení Apache
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
+
+RUN apt-get update && \
+    apt-get install -y apache2 && \
+    a2enmod include && \
+    a2enmod rewrite && \
+    a2enmod proxy_fcgi && \
+    a2enmod expires && \
+    a2enmod filter && \
+    a2enmod headers && \
+    a2enmod proxy && \
+    a2enmod proxy_balancer && \
+    a2enmod proxy_http && \
+    a2enmod ssl && \
+    rm /etc/apache2/sites-enabled/000-default.conf
+
+RUN mkdir -p /var/www/html
+
+COPY ./conf.d/apache/apache2.conf /etc/apache2/
+
+# Instalace a nastavení PHP (5.6)
+# Pro běžný provoz budeme používat PHP balíčky z repozitáře: https://deb.sury.org
+RUN apt-get update && \
+    apt-get install -y apt-transport-https lsb-release ca-certificates && \
+    wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
+    sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends php5.6 php5.6-cli libapache2-mod-php5.6 \
+    php5.6-curl \
+    php5.6-intl \
+    php5.6-gd \
+    php5.6-mbstring \
+    php5.6-pdo \
+    php5.6-mysql \
+    php5.6-json \
+    php5.6-zip \
+    php5.6-xml \
+    php5.6-imagick \
+    php5.6-redis \
+    php5.6-bcmath \
+    php5.6-imap
+
+COPY ./conf.d/php/php.ini /etc/php/5.6/apache2/
+COPY ./conf.d/php/php.ini /etc/php/5.6/cli/
+
+# Xdebug instalujeme a konfigurujeme zvlášť
+RUN apt-get update && \
+    apt-get install -y php5.6-xdebug
+
+COPY ./conf.d/php/xdebug.ini /etc/php/5.6/apache2/conf.d/
+COPY ./conf.d/php/xdebug.ini /etc/php/5.6/cli/conf.d/
+
+# Instalace Composeru
+ENV COMPOSER_ALLOW_SUPERUSER 1
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Instalace Presstissima které zajišťuje pararelní stahování balíčku přes composer (něco jako Yarn)
+RUN composer global require "hirak/prestissimo:^0.3"
+
+# Instalace supervisord
+RUN apt-get update && \
+    apt-get install -y supervisor
+RUN groupadd supervisor
+RUN usermod -a root -G supervisor
+COPY ./conf.d/supervisor/supervisord.conf /etc/supervisor/
+
+# Instalace MailHog
+RUN wget https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz --no-check-certificate
+RUN tar -C /etc -xzf go1.9.linux-amd64.tar.gz go && rm go1.9.linux-amd64.tar.gz
+RUN mkdir -p /root/gocode
+ENV GOPATH=/root/gocode
+RUN /etc/go/bin/go get github.com/mailhog/MailHog
+RUN mv /root/gocode/bin/MailHog /usr/local/bin
+RUN rm -rf /root/gocode
+
+COPY ./conf.d/supervisor/conf.d/mailhog.conf /etc/supervisor/conf.d
+
+# Pročištění souborů a cache dockerimage
+RUN apt-get clean -y && apt-get autoclean -y && apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /var/lib/log/* /tmp/* /var/tmp/*
+
+# Otevření potřebných portů
+EXPOSE 80
+EXPOSE 443
+EXPOSE 9001
+EXPOSE 8025
+
+# Nastartování služeb při zapnutí konteineru
+COPY ./conf.d/bash/container.start.sh /usr/local/bin/
+RUN sed -i 's/\r$//' /usr/local/bin/container.start.sh
+RUN chmod +x /usr/local/bin/container.start.sh
+WORKDIR /var/www/html
+CMD /usr/local/bin/container.start.sh

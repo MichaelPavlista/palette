@@ -1,7 +1,7 @@
-#Palette v 2.6.0
+# Palette v 2.7.0
 PHP rozšíření umožňující pokročilou manipulaci s obrázky, vytváření jejich miniatur a verzí.
 
-##K čemu Palette slouží a jak funguje?
+## K čemu Palette slouží a jak funguje?
 - Palette slouží k jednoduchému tvoření různých variant obrázku.
 - Varianta daného obrázku je vždy generovaná při první požadavku na požadovanou variantu obrázku.
 - Generování varianty obrázku se neprovádí při běhu spušťěného PHP scriptu, Palette pouze **vygeneruje url** adresu na které bude požadovaná varianta dostupná. Až při naštívění této url se tato varianta (pokud nebyla již vytvořena dříve) vygeneruje.   Díky tomuto principu vytváření variant obrázku není problém na jedné stránce generovat klidně 100+ variant bez toho, aby PHP došly prostředky, nebo načítání stránky trvalo delší dobu.
@@ -11,7 +11,7 @@ PHP rozšíření umožňující pokročilou manipulaci s obrázky, vytváření
 
      php composer.phar require pavlista/palette
 
-####2. Vytvoříme instanci služby **Palette\Service**, která zajišťuje přístup k funkcím Palette.
+#### 2. Vytvoříme instanci služby **Palette\Service**, která zajišťuje přístup k funkcím Palette.
 Třída má pouze jeden povinný parametr a to instanci třídy, která implementuje interface Palette\Generator\IPictureGenerator v Palette je již připravená implementace a to třída **Palette\Generator\Server**.
 
 **Argumenty Palette\Generator\Server jsou:**
@@ -32,7 +32,7 @@ $generator = new Palette\Generator\Server(
 $palette = new Palette\Service($generator);
 ```
 
-####3. Vytvoříme a připravíme backend pro Palette
+#### 3. Vytvoříme a připravíme backend pro Palette
 V umístění, které jsme si zvolily jako úložiště vygenerovaných variant (storagePath) je nutné vytvořit soubor palette-server.php (jméno může být libovolné), v kterém na instanci služby Palette (Palette\Service) zavoláme metodu serverResponse.
 
 **Kód souboru by měl vypadat například takto:**
@@ -43,7 +43,7 @@ V umístění, které jsme si zvolily jako úložiště vygenerovaných variant 
 $palette->serverResponse();
 ```
 
-####4. Přesměrujeme neexistující soubory a adresáře na backend
+#### 4. Přesměrujeme neexistující soubory a adresáře na backend
 V umístění, které jsme si zvolily jako úložiště nastavíme přesměrování všech neexistujících souborů a adresářů na vytvořený soubor s backendem.
 
 #####Vorové Nastavení v Apache
@@ -58,7 +58,7 @@ Do složky úložiště přidáme následující soubor .httacess:
 #</IfModule>
 ```
 
-#####Vzorové Nastavení Nginx
+##### Vzorové Nastavení Nginx
 Do sekce nastavení aktuálního serveru přidáme sekci:
 ```nginx
 location /files/thumbs/ {

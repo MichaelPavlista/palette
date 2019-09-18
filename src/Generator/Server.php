@@ -13,9 +13,9 @@
 
 namespace Palette\Generator;
 
-use Palette\DecryptionException;
-use Palette\Exception;
 use Palette\Picture;
+use Palette\Exception;
+use Palette\Utils\Security;
 
 /**
  * Class Server
@@ -24,6 +24,31 @@ use Palette\Picture;
  */
 class Server extends CurrentExecution implements IServerGenerator
 {
+    /** @var string */
+    private $signingKey;
+
+
+    /**
+     * Server constructor.
+     * @param string $storagePath absolute or relative path to directory for storage generated image variants
+     * @param string $storageUrl absolute url to directory of generated images
+     * @param string|null $basePath path to website directory root (see documentation)
+     * @param string $signingKey
+     * @throws Exception
+     */
+    public function __construct($storagePath, $storageUrl, $basePath, $signingKey)
+    {
+        parent::__construct($storagePath, $storageUrl, $basePath);
+
+        if(!is_string($signingKey) || !$signingKey)
+        {
+            throw new Exception('Signing key must be non-empty string');
+        }
+
+        $this->signingKey = $signingKey;
+    }
+
+
     /**
      * Save picture variant to generator storage.
      * Server generator does't save itself.
@@ -75,19 +100,21 @@ class Server extends CurrentExecution implements IServerGenerator
         // BUILD VARIANT URL
         $variantActual = $this->isFileActual($file, $picture);
 
-        if($variantActual === FALSE)
+        if ($variantActual === FALSE)
         {
             $queryString = $picture->getImage() . '@' . $picture->getImageQuery();
-            $queryString = openssl_encrypt($queryString, $this->cypherMethod, $this->key, 0, $this->iv);
-            $queryString = urlencode($queryString);
-            return $url . '?imageQuery=' . $queryString;
+
+            return $url . '?imageQuery=' . Security::signPaletteQuery($queryString, $this->signingKey);
         }
-        elseif($variantActual === NULL)
+
+        if($variantActual === NULL)
         {
+            $queryString = $picture->getImage() . '@' . $picture->getImageQuery();
+
             $this->requestWithoutWaiting(
 
                 $this->storageUrl . 'palette-server.php',
-                array('regenerate' => $picture->getImage() . '@' . $picture->getImageQuery())
+                array('regenerate' => Security::signPaletteQuery($queryString, $this->signingKey))
             );
         }
 
@@ -104,15 +131,9 @@ class Server extends CurrentExecution implements IServerGenerator
     {
         if(!empty($_GET['imageQuery']))
         {
-            $query = $_GET['imageQuery'];
-            $query = openssl_decrypt($query, $this->cypherMethod, $this->key, 0, $this->iv);
+            $paletteQuery = Security::validateSignedPaletteQuery($_GET['imageQuery'], $this->signingKey);
 
-            if ($query === FALSE)
-            {
-                throw new DecryptionException();
-            }
-
-            $picture  = $this->loadPicture($query);
+            $picture  = $this->loadPicture($paletteQuery);
             $savePath = $this->getPath($picture);
 
             $picture->save($savePath);
@@ -127,7 +148,9 @@ class Server extends CurrentExecution implements IServerGenerator
 
         if(!empty($_POST['regenerate']))
         {
-            $picture = $this->loadPicture($_POST['regenerate']);
+            $paletteQuery = Security::validateSignedPaletteQuery($_POST['regenerate'], $this->signingKey);
+
+            $picture = $this->loadPicture($paletteQuery);
             $picture->save($this->getPath($picture));
         }
     }
@@ -138,7 +161,7 @@ class Server extends CurrentExecution implements IServerGenerator
      * @param string $url
      * @param array $params
      */
-    function requestWithoutWaiting($url, array $params = array())
+    protected function requestWithoutWaiting($url, array $params = array())
     {
         $post = array();
 
@@ -188,5 +211,4 @@ class Server extends CurrentExecution implements IServerGenerator
         fwrite($fp, $command);
         fclose($fp);
     }
-
 }

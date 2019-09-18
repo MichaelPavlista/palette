@@ -1,0 +1,14 @@
+version: '2.1'
+
+services:
+  palette.local:
+    environment:
+      # Možná lokální nastavení:
+      # 1) XDEBUG_ENABLED = 1 nebo 0, určuje zda se má načíst PHP rozšíření Xdebug
+      # 2) XDEBUG_HOST = IP adresa počítače v síti dockeru
+      #    Defaultní hodnoty (můžou se lišit)
+      #    - Windows: 10.0.75.1
+      #    - Linux: 172.17.0.1
+      #    - OSX: host.docker.internal
+      - XDEBUG_ENABLED=0
+      - XDEBUG_HOST=host.docker.internal

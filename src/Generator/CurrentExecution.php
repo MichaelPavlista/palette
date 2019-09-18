@@ -41,15 +41,6 @@ class CurrentExecution implements IPictureGenerator
     /** @var IPictureLoader witch can modify or change loaded picture */
     protected $pictureLoader;
 
-    /** @var string key for signing imageQuery */
-    protected $key;
-
-    /** @var string cypherMethod for signing imageQuery */
-    protected $cypherMethod;
-
-    /** @var string init vector for signing imageQuery */
-    protected $iv;
-
 
     /**
      * CurrentExecution constructor.
@@ -58,40 +49,23 @@ class CurrentExecution implements IPictureGenerator
      * @param string|null $basePath path to website directory root (see documentation)
      * @throws Exception
      */
-    public function __construct($storagePath, $storageUrl, $basePath = NULL, $key = NULL, $cypherMethod = NULL, $iv = NULL)
+    public function __construct($storagePath, $storageUrl, $basePath = NULL)
     {
         $storagePath = realpath($storagePath);
 
-        if(!file_exists($storagePath))
+        if (!file_exists($storagePath))
         {
             throw new Exception('Image storagePath does not exists');
         }
-        elseif(!is_writable($storagePath))
+
+        if(!is_writable($storagePath))
         {
             throw new Exception("Image storagePath '$storagePath' is not writable");
-        }
-
-        if ($key === NULL)
-        {
-            throw new Exception('Key has to be specified');
-        }
-
-        if ($cypherMethod === NULL)
-        {
-            $cypherMethod = 'aes256';
-        }
-
-        if ($iv === NULL)
-        {
-            throw new Exception('Parameter iv has to be specified');
         }
 
         $this->storagePath = $this->unifyPath($storagePath);
         $this->storageUrl = $storageUrl;
         $this->basePath = $this->unifyPath($basePath);
-        $this->key = $key;
-        $this->cypherMethod = $cypherMethod;
-        $this->iv = $iv;
     }
 
 
@@ -100,6 +74,7 @@ class CurrentExecution implements IPictureGenerator
      * @param string $image path to image file
      * @param string|null $worker Palette\Picture worker constant
      * @return Picture
+     * @throws Exception
      */
     public function loadPicture($image, $worker = NULL)
     {

@@ -15,10 +15,10 @@ namespace Palette;
 
 use Palette\Generator\IPictureGenerator;
 use ReflectionClass;
-use Imagick;
 use Palette\Effect\Colorspace;
 use Palette\Effect\PictureEffect;
 use Palette\Effect\Resize;
+use Imagick;
 
 /**
  * Class Picture
@@ -227,11 +227,11 @@ class Picture
     {
         if(empty($this->resource))
         {
-            if((is_null($this->worker) || $this->worker === $this::WORKER_IMAGICK) && $this->imagickAvailable())
+            if(($this->worker === NULL || $this->worker === $this::WORKER_IMAGICK) && self::imagickAvailable())
             {
                 $this->resource = $this->createImagick($this->image);
             }
-            elseif((is_null($this->worker) || $this->worker === $this::WORKER_GD) && $this->gdAvailable())
+            elseif(($this->worker === NULL || $this->worker === $this::WORKER_GD) && self::gdAvailable())
             {
                 $this->resource = $this->getGdResource($this->image);
             }
@@ -733,6 +733,7 @@ class Picture
                 {
                     $this->resource->setInterlaceScheme(Imagick::INTERLACE_PLANE);
                 }
+
                 $this->resource->setImageFormat('webp');
 
                 $this->resource->writeImage($file);
@@ -893,12 +894,13 @@ class Picture
         );
     }
 
+
     /**
+     * Má se obrázek uložit jako Webp?
      * @return bool
      */
-    public function isWebp(): bool
+    public function isWebp()
     {
         return $this->webp;
     }
-
 }

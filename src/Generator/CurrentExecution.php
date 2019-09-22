@@ -240,6 +240,11 @@ class CurrentExecution implements IPictureGenerator
      */
     public function setTemplateQuery($template, $imageQuery)
     {
+        if(!is_string($template) || !preg_match('/^[a-zA-Z0-9_-]+$/', $template))
+        {
+            throw new Exception('Palette template name must match expression ^[a-zA-Z0-9_-]+$');
+        }
+
         $this->template[$template] = $imageQuery;
     }
 

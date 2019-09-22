@@ -84,22 +84,27 @@ class Picture
             // EXTRACTION OF IMAGE QUERY
             $imageParts[1] = preg_replace('/\s+/', '', $imageParts[1]);
 
-            // IS IMAGE QUERY TEMPALTE?
-            if(strncmp($imageParts[1], '.', 1) === 0)
+            // Find and replace templates in image query
+            if(preg_match_all('/\.([a-zA-Z][a-zA-Z0-9_-]+)/', $imageParts[1], $templateMatches))
             {
+                // Check if picture generator is set.
                 if(!$pictureGenerator)
                 {
-                    throw new Exception("Using pallete query template $imageParts[1] without defined generator");
+                    throw new Exception(sprintf('Using pallete query template %s without defined generator is unsupported', $imageParts[1]));
                 }
 
-                $templateQuery = $pictureGenerator->getTemplateQuery(mb_substr($imageParts[1], 1));
-
-                if(!$templateQuery)
+                // Replace image query templates
+                foreach ($templateMatches[0] as $templateMatch)
                 {
-                    throw new Exception("Trying to use undefined pallete query template $imageParts[1]");
-                }
+                    $templateQuery = $pictureGenerator->getTemplateQuery(mb_substr($templateMatch, 1));
 
-                $imageParts[1] = preg_replace('/\s+/', '', $templateQuery);
+                    if(!$templateQuery)
+                    {
+                        throw new Exception(sprintf('Trying to use undefined pallete query template %s', $templateMatch));
+                    }
+
+                    $imageParts[1] = str_replace($templateMatch, $templateQuery, $imageParts[1]);
+                }
             }
 
             foreach(preg_split("/[\s&|]+/", $imageParts[1]) as $effect)

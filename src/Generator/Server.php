@@ -157,6 +157,23 @@ class Server extends CurrentExecution implements IServerGenerator
 
 
     /**
+     * Returns imageQuery from Request.
+     * @return string
+     * @throws Exception
+     * @internal
+     */
+    public function getRequestImageQuery()
+    {
+        if(!empty($_GET['imageQuery']))
+        {
+            return Security::validateSignedPaletteQuery($_GET['imageQuery'], $this->signingKey);
+        }
+
+        return '';
+    }
+
+
+    /**
      * Sends the POST request without waiting for a response.
      * @param string $url
      * @param array $params

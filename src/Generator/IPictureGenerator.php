@@ -86,7 +86,21 @@ interface IPictureGenerator
      */
     public function getFallbackImage();
 
-    
+
+    /**
+     * Set default image quality
+     * @param $quality
+     */
+    public function setDefaultQuality($quality);
+
+
+    /**
+     * Get default image quality
+     * @return int|null
+     */
+    public function getDefaultQuality();
+
+
     /**
      * Set image query template
      * @param string $template

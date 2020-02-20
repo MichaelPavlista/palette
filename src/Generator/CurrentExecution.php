@@ -41,6 +41,9 @@ class CurrentExecution implements IPictureGenerator
     /** @var IPictureLoader witch can modify or change loaded picture */
     protected $pictureLoader;
 
+    /** @var int default quality */
+    protected $defaultQuality;
+
 
     /**
      * CurrentExecution constructor.
@@ -246,6 +249,31 @@ class CurrentExecution implements IPictureGenerator
         }
 
         $this->template[$template] = $imageQuery;
+    }
+
+
+    /**
+     * Set default image quality
+     * @param $quality
+     */
+    public function setDefaultQuality($quality)
+    {
+        if (FALSE === is_int($quality) || $quality < 1 || $quality > 100)
+        {
+            throw new Exception('Palette quality must be between 1-100');
+        }
+
+        $this->defaultQuality = $quality;
+    }
+
+
+    /**
+     * Get default image quality
+     * @return int|null
+     */
+    public function getDefaultQuality()
+    {
+        return $this->defaultQuality;
     }
 
 

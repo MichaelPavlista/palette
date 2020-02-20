@@ -75,6 +75,13 @@ class Picture
             $fallbackImage = $pictureGenerator->getFallbackImage();
         }
 
+        // SET DEFAULT QUALITY IF SPECIFIED
+        $defaultQuality = $pictureGenerator->getDefaultQuality();
+        if ($defaultQuality !== NULL)
+        {
+            $this->quality($defaultQuality);
+        }
+
         // SUPPORT FOR PALETTE IMAGE QUERY
         if(strpos($image, '@'))
         {

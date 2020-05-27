@@ -76,11 +76,14 @@ class Picture
         }
 
         // SET DEFAULT QUALITY IF SPECIFIED
-        $defaultQuality = $pictureGenerator->getDefaultQuality();
-
-        if ($defaultQuality !== NULL)
+        if ($pictureGenerator !== NULL)
         {
-            $this->quality($defaultQuality);
+            $defaultQuality = $pictureGenerator->getDefaultQuality();
+
+            if ($defaultQuality !== NULL)
+            {
+                $this->quality($defaultQuality);
+            }
         }
 
         // SUPPORT FOR PALETTE IMAGE QUERY

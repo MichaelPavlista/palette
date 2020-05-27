@@ -77,6 +77,7 @@ class Picture
 
         // SET DEFAULT QUALITY IF SPECIFIED
         $defaultQuality = $pictureGenerator->getDefaultQuality();
+
         if ($defaultQuality !== NULL)
         {
             $this->quality($defaultQuality);
@@ -92,7 +93,7 @@ class Picture
             $imageParts[1] = preg_replace('/\s+/', '', $imageParts[1]);
 
             // Find and replace templates in image query
-            if(preg_match_all('/\.([a-zA-Z][a-zA-Z0-9_-]+)/', $imageParts[1], $templateMatches))
+            if (preg_match_all('/(^|[\s&|]+)\.([a-zA-Z][a-zA-Z0-9_-]+)(?=($|[\s&|]+))/', $imageParts[1], $templateMatches))
             {
                 // Check if picture generator is set.
                 if(!$pictureGenerator)
@@ -100,20 +101,26 @@ class Picture
                     throw new Exception(sprintf('Using pallete query template %s without defined generator is unsupported', $imageParts[1]));
                 }
 
-                // Replace image query templates
-                foreach ($templateMatches[0] as $templateMatch)
+                // Replace templates in image query.
+                foreach ($templateMatches[2] as $templateMatch)
                 {
-                    $templateQuery = $pictureGenerator->getTemplateQuery(mb_substr($templateMatch, 1));
+                    $templateQuery = $pictureGenerator->getTemplateQuery($templateMatch);
 
+                    // Template definition does not exist.
                     if(!$templateQuery)
                     {
-                        throw new Exception(sprintf('Trying to use undefined pallete query template %s', $templateMatch));
+                        throw new Exception(sprintf('Trying to use undefined pallete query template %s', ".$templateMatch"));
                     }
 
-                    $imageParts[1] = str_replace($templateMatch, $templateQuery, $imageParts[1]);
+                    $imageParts[1] = preg_replace(
+                        '/(^|[\s&|]+)\.' . $templateMatch . '($|[\s&|]+)/',
+                        '${1}' . $templateQuery . '${2}',
+                        $imageParts[1]
+                    );
                 }
             }
 
+            // Parse image query into commands.
             foreach(preg_split("/[\s&|]+/", $imageParts[1]) as $effect)
             {
                 if(preg_match('#^[0-9]#', $effect))

@@ -92,6 +92,7 @@ class Watermark extends PictureEffect
         $pictureHeight = $image->getImageHeight();
 
         $watermarkPicture = new Picture($this->watermark, NULL, Picture::WORKER_IMAGICK);
+        $watermarkPicture->quality(100);
 
         $opacity = new Opacity($this->opacity);
         $opacity->apply($watermarkPicture);
@@ -174,6 +175,7 @@ class Watermark extends PictureEffect
 
         // WATERMARK DIMENSIONS
         $watermarkPicture = new Picture($this->watermark, NULL, Picture::WORKER_GD);
+        $watermarkPicture->quality(100);
 
         $opacity = new Opacity($this->opacity);
         $opacity->apply($watermarkPicture);

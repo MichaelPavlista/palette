@@ -26,6 +26,8 @@ class Server extends CurrentExecution implements IServerGenerator
 {
     /** @var string */
     private $signingKey;
+    /** @var null */
+    private $baseUrl;
 
 
     /**
@@ -34,9 +36,10 @@ class Server extends CurrentExecution implements IServerGenerator
      * @param string $storageUrl absolute url to directory of generated images
      * @param string|null $basePath path to website directory root (see documentation)
      * @param string $signingKey
+     * @param null $baseUrl
      * @throws Exception
      */
-    public function __construct($storagePath, $storageUrl, $basePath, $signingKey)
+    public function __construct($storagePath, $storageUrl, $basePath, $signingKey, $baseUrl = NULL)
     {
         parent::__construct($storagePath, $storageUrl, $basePath);
 
@@ -46,6 +49,7 @@ class Server extends CurrentExecution implements IServerGenerator
         }
 
         $this->signingKey = $signingKey;
+        $this->baseUrl = $baseUrl;
     }
 
 
@@ -189,12 +193,19 @@ class Server extends CurrentExecution implements IServerGenerator
 
         $post = implode('&', $post);
 
-        $request = parse_url($url);
+        $request = array_merge(parse_url($this->baseUrl), parse_url($url));
+
+        $https = isset($_SERVER['HTTPS']) || (isset($request['scheme']) && strtolower($request['scheme']) === 'https');
 
         // SUPPORT FOR RELATIVE GENERATOR URL
         if(!isset($request['host']))
         {
             $request['host'] = $_SERVER['HTTP_HOST'];
+        }
+
+        if(!isset($request['port']) && $https)
+        {
+            $request['port'] = 443;
         }
 
         if(!isset($request['port']))
@@ -203,8 +214,8 @@ class Server extends CurrentExecution implements IServerGenerator
         }
 
         // SEND REQUEST WITHOUT WAITING
-        $protocol = isset($_SERVER['HTTPS']) ? 'ssl://' : '';
-        $safePort = isset($_SERVER['HTTPS']) ? 443 : 80;
+        $protocol = $https ? 'ssl://' : '';
+        $safePort = $https ? 443 : 80;
 
         // HTTPS WORKAROUND
         if($request['port'] == 80 && $safePort == 443)

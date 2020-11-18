@@ -31,7 +31,7 @@ class Picture
     /** @const picture generation worker (GD extension) */
     const WORKER_GD = 'gd';
 
-    /** @var string picture generation worker */
+    /** @var string|null picture generation worker */
     protected $worker;
 
     /** @var string path to source image file */
@@ -63,8 +63,8 @@ class Picture
      * Picture constructor.
      * @param string $image
      * @param IPictureGenerator|NULL $pictureGenerator
-     * @param null $worker worker constant
-     * @param null|string $fallbackImage absolute path to image witch can be used when source image is missing
+     * @param string|null $worker worker constant
+     * @param string|null $fallbackImage absolute path to image witch can be used when source image is missing
      * @throws Exception
      */
     public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL, $fallbackImage = NULL)

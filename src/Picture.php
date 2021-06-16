@@ -281,7 +281,18 @@ class Picture
      */
     public function isGd()
     {
-        return is_resource($this->resource);
+        return $this->isResourceGd($this->resource);
+    }
+
+
+    /**
+     * Is Resource GD resource or object?
+     * @param $resource
+     * @return bool
+     */
+    protected function isResourceGd($resource)
+    {
+        return is_resource($resource) || (is_object($resource) && get_class($resource) === 'GdImage');
     }
 
 
@@ -289,6 +300,7 @@ class Picture
      * Get resource of picture in specified format (GD resource / Imagick instance).
      * @param null $worker worker constant
      * @return Imagick|resource
+     * @throws Exception
      */
     public function getResource($worker = NULL)
     {
@@ -303,10 +315,8 @@ class Picture
         {
             return $this->resource;
         }
-        else
-        {
-            return $this->convertResource($worker);
-        }
+
+        return $this->convertResource($worker);
     }
 
 
@@ -347,7 +357,7 @@ class Picture
      */
     protected function getWorker($resource)
     {
-        return is_resource($resource) ? self::WORKER_GD : self::WORKER_IMAGICK;
+        return $this->isResourceGd($resource) ? self::WORKER_GD : self::WORKER_IMAGICK;
     }
 
 

@@ -764,31 +764,16 @@ class Picture
         {
             if($extension === 'webp' || $this->isWebp())
             {
-                try
+                // There are problems with saving webP via imagick.
+                // We will fall back to use GD extension to save image.
+                $imageGd = $this->convertResource($this::WORKER_GD);
+
+                if($this->progressive)
                 {
-                    if($this->progressive)
-                    {
-                        $this->resource->setInterlaceScheme(Imagick::INTERLACE_PLANE);
-                    }
-                    $this->resource->setImageFormat('webp');
-
-                    $this->resource->writeImage($file);
+                    imageinterlace($imageGd, TRUE);
                 }
-                catch (\ImagickException $e)
-                {
-                    // Falback to save webp image
-                    if($e->getMessage() === 'Unable to set image format')
-                    {
-                        $imageGd = $this->convertResource($this::WORKER_GD);
 
-                        if($this->progressive)
-                        {
-                            imageinterlace($imageGd, TRUE);
-                        }
-
-                        imagewebp($imageGd, $file, $this->quality);
-                    }
-                }
+                imagewebp($imageGd, $file, $this->quality);
             }
             elseif($extension === 'jpg')
             {

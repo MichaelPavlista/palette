@@ -1,4 +1,4 @@
-# Palette v 2.7.7
+# Palette v 2.7.8
 PHP rozšíření umožňující pokročilou manipulaci s obrázky, vytváření jejich miniatur a verzí.
 
 ## K čemu Palette slouží a jak funguje?

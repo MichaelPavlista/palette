@@ -600,7 +600,7 @@ class Picture
 
     /**
      * Save the edited image to the repository, or specific location
-     * @param null $file
+     * @param string|null $file
      */
     public function save($file = NULL)
     {
@@ -621,7 +621,11 @@ class Picture
 
     /**
      * Generate image from a source and save to specified file
-     * @param $file
+     * @param string $file
+     * @throws Exception
+     * @throws \ImagickException
+     * @throws \ImagickPixelException
+     * @throws \ImagickPixelIteratorException
      */
     protected function savePicture($file)
     {

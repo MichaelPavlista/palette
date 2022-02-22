@@ -32,7 +32,7 @@ class CurrentExecution implements IPictureGenerator
     /** @var string|null Path to website directory root (see documentation) */
     protected $basePath;
 
-    /** @var array palette query templates storage */
+    /** @var array<string, string> palette query templates storage */
     protected $template = array();
 
     /** @var string|null absolute path to fallback image */
@@ -93,7 +93,6 @@ class CurrentExecution implements IPictureGenerator
     /**
      * Set picture loader witch can modify or change loaded picture
      * @param IPictureLoader $pictureLoader
-     * @throws Exception
      */
     public function setPictureLoader(IPictureLoader $pictureLoader)
     {
@@ -130,8 +129,28 @@ class CurrentExecution implements IPictureGenerator
 
 
     /**
+     * Returns absolute or relative path to directory for storage generated image variants.
+     * @return string
+     */
+    public function getStoragePath()
+    {
+        return $this->storagePath;
+    }
+
+
+    /**
+     * Returns path to website directory root (see documentation).
+     * @return string|null
+     */
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+
+
+    /**
      * Returns file path of the image file variant.
-     * Does't verify if the file physically exists.
+     * Doesn't verify if the file physically exists.
      * @param Picture $picture
      * @return string
      */
@@ -166,10 +185,8 @@ class CurrentExecution implements IPictureGenerator
             {
                 return TRUE;
             }
-            else
-            {
-                return NULL;
-            }
+
+            return NULL;
         }
 
         return FALSE;
@@ -206,7 +223,7 @@ class CurrentExecution implements IPictureGenerator
 
 
     /**
-     * Set fallback image witch is used when requred image is not found.
+     * Set fallback image witch is used when required image is not found.
      * @param string $fallbackImage absolute or relative path to fallback image.
      * @throws Exception
      */
@@ -226,7 +243,7 @@ class CurrentExecution implements IPictureGenerator
 
 
     /**
-     * Get fallback image witch is used when requred image is not found.
+     * Get fallback image witch is used when required image is not found.
      * @return string|null
      */
     public function getFallbackImage()
@@ -240,6 +257,7 @@ class CurrentExecution implements IPictureGenerator
      * @param string $template
      * @param string $imageQuery
      * @return void
+     * @throws Exception
      */
     public function setTemplateQuery($template, $imageQuery)
     {
@@ -255,6 +273,7 @@ class CurrentExecution implements IPictureGenerator
     /**
      * Set default image quality
      * @param $quality
+     * @throws Exception
      */
     public function setDefaultQuality($quality)
     {
@@ -292,6 +311,17 @@ class CurrentExecution implements IPictureGenerator
         return FALSE;
     }
 
+
+    /**
+     * Get defined templates (template name => palette query).
+     * @return array<string, string>
+     */
+    public function getTemplates()
+    {
+        return $this->template;
+    }
+
+
     /**
      * Unify filesystem path
      * @param string $path
@@ -302,5 +332,4 @@ class CurrentExecution implements IPictureGenerator
     {
         return preg_replace('/\\'. $slash .'+/', $slash, str_replace(array('/', "\\"), $slash, $path));
     }
-
 }

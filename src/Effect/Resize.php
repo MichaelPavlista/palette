@@ -51,8 +51,8 @@ class Resize extends PictureEffect
     /**
      * Resize constructor.
      * @param $width
-     * @param null $height
-     * @param null $resizeMode
+     * @param int|null $height
+     * @param int|null $resizeMode
      * @param int $resizeSmaller
      * @param string $color
      */

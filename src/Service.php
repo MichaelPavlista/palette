@@ -51,7 +51,7 @@ class Service
     /**
      * Get absolute url to image with specified image query string
      * @param $image
-     * @param null $imageQuery
+     * @param string|null $imageQuery
      * @return null|string
      */
     public function getUrl($image, $imageQuery = NULL)

@@ -40,7 +40,7 @@ class Watermark extends PictureEffect
      * @param $watermark
      * @param string $position
      * @param float $opacity
-     * @param null $size
+     * @param int|float|null $size
      * @param int $space
      */
     public function __construct($watermark, $position = 'bottomRight', $opacity = 0.5, $size = NULL, $space = 10)

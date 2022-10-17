@@ -19,6 +19,7 @@ use Palette\Effect\Colorspace;
 use Palette\Effect\PictureEffect;
 use Palette\Effect\Resize;
 use Imagick;
+use ReflectionException;
 
 /**
  * Class Picture
@@ -43,8 +44,8 @@ class Picture
     /** @var null|bool save as progressive image? */
     protected $progressive = TRUE;
 
-    /** @var bool use WebP format */
-    protected $webp = FALSE;
+    /** @var string|null save image in custom image format viz. EPictureFormat:*) */
+    protected $saveAs = null;
 
     /** @var array applied effects on picture */
     protected $effect = array();
@@ -65,7 +66,7 @@ class Picture
      * @param IPictureGenerator|NULL $pictureGenerator
      * @param string|null $worker worker constant
      * @param string|null $fallbackImage absolute path to image witch can be used when source image is missing
-     * @throws Exception
+     * @throws Exception|ReflectionException
      */
     public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL, $fallbackImage = NULL)
     {
@@ -146,10 +147,24 @@ class Picture
                         continue;
                     }
 
+                    // Podpora pro definici formátu obrázku k uložení.
+                    if($effectClass === 'Palette\Effect\SaveAs' && isset($effectQuery[1]))
+                    {
+                        if (
+                            !in_array($effectQuery[1], [EPictureFormat::WEBP, EPictureFormat::GIF, EPictureFormat::JPG, EPictureFormat::PNG], true))
+                        {
+                            throw new Exception('Invalid SaveAs format');
+                        }
+
+                        $this->saveAs = $effectQuery[1];
+
+                        continue;
+                    }
+
                     // SUPPORT WEBP ARGUMENT IN PALETTE QUERY
                     if($effectClass === 'Palette\Effect\WebP')
                     {
-                        $this->webp = TRUE;
+                        $this->saveAs = EPictureFormat::WEBP;
 
                         continue;
                     }
@@ -298,7 +313,7 @@ class Picture
 
     /**
      * Get resource of picture in specified format (GD resource / Imagick instance).
-     * @param null $worker worker constant
+     * @param string|null $worker worker constant
      * @return Imagick|resource
      * @throws Exception
      */
@@ -503,11 +518,15 @@ class Picture
 
         $command .= 'Quality;' . $this->quality . '&';
 
-        if($this->webp)
+        // Podpora pro možnost definovat cílový formát ukládaného obrázku.
+        if ($this->saveAs)
         {
-            $command .= 'WebP&';
+            $command .= $this->saveAs === EPictureFormat::WEBP
+                ? 'WebP&'
+                : "SaveAs;$this->saveAs&";
         }
 
+        // Podpora pro progresivní uložení obrázku.
         if($this->progressive)
         {
             $command .= 'Progressive&';
@@ -551,7 +570,7 @@ class Picture
      * Resize picture by specified dimensions
      * @param int $width
      * @param int $height
-     * @param null $resizeMode (Palette\Effect\Resize constant)
+     * @param string|null $resizeMode (Palette\Effect\Resize constant)
      */
     public function resize($width, $height = NULL, $resizeMode = NULL)
     {
@@ -650,11 +669,14 @@ class Picture
             mkdir($directory, 0777, TRUE);
         }
 
-        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        // Zjistíme v jakém formátu máme obrázek uložit.
+        $imageSaveFormat = $this->saveAs ?: strtolower(pathinfo($file, PATHINFO_EXTENSION));
 
+        // Provedeme uložení obrázku přes GD.
         if($this->isGd())
         {
-            if($extension === 'webp' || $this->isWebp())
+            // Uložení do WebP.
+            if($imageSaveFormat === EPictureFormat::WEBP)
             {
                 if($this->progressive)
                 {
@@ -663,7 +685,8 @@ class Picture
 
                 imagewebp($this->resource, $file, $this->quality);
             }
-            elseif($extension === 'png')
+            // Uložení do PNG.
+            elseif($imageSaveFormat === EPictureFormat::PNG)
             {
                 if($this->progressive)
                 {
@@ -672,7 +695,8 @@ class Picture
 
                 imagepng($this->resource, $file, 9);
             }
-            elseif($extension === 'gif')
+            // Uložení do GIF.
+            elseif($imageSaveFormat === EPictureFormat::GIF)
             {
                 $gifResource = $this->resource;
 
@@ -743,6 +767,7 @@ class Picture
 
                 imagegif($gifResource, $file);
             }
+            // Uložení do JPG.
             else
             {
                 $image = $this->resource;
@@ -764,9 +789,11 @@ class Picture
                 imagejpeg($background, $file, $this->quality);
             }
         }
+        // Provedeme uložení obrázku přes Imagick.
         else
         {
-            if($extension === 'webp' || $this->isWebp())
+            // Uložení do WebP.
+            if($imageSaveFormat === EPictureFormat::WEBP)
             {
                 // There are problems with saving webP via imagick.
                 // We will fall back to use GD extension to save image.
@@ -779,7 +806,8 @@ class Picture
 
                 imagewebp($imageGd, $file, $this->quality);
             }
-            elseif($extension === 'jpg')
+            // Uložení do JPG.
+            elseif($imageSaveFormat === EPictureFormat::JPG)
             {
                 $background = $this->createImagick();
                 $background->newImage(
@@ -801,7 +829,8 @@ class Picture
 
                 $background->writeImage($file);
             }
-            elseif($extension === 'gif')
+            // Uložení do GIF.
+            elseif($imageSaveFormat === EPictureFormat::GIF)
             {
                 $validAlpha = 0.333;
                 $visiblePixels = 0;
@@ -847,6 +876,7 @@ class Picture
 
                 $this->resource->writeImage($file);
             }
+            // Uložení do PNG.
             else
             {
                 if($this->progressive)
@@ -858,10 +888,11 @@ class Picture
             }
         }
 
+        // Nastavení práv založenému obrázku.
         chmod($file, 0777);
         touch($file, filemtime($this->getImage()));
 
-        // DELETE TEMP FILES
+        // Odstranění dočasných souborů.
         foreach($this->tmpImage as $tmpImage)
         {
             unlink($tmpImage);
@@ -929,7 +960,6 @@ class Picture
         }
 
         return array(
-
             'w' => $width,
             'h' => $height,
         );
@@ -939,10 +969,13 @@ class Picture
     /**
      * Mají se vždy verze obrázku uložit jako WebP?
      * @param bool $forceWebP
+     * @deprecated
      */
     public function forceWebP($forceWebP = TRUE)
     {
-        $this->webp = (bool) $forceWebP;
+        $this->saveAs = $forceWebP
+            ? EPictureFormat::WEBP
+            : null;
     }
 
 
@@ -952,6 +985,16 @@ class Picture
      */
     public function isWebp()
     {
-        return $this->webp;
+        return $this->saveAs === EPictureFormat::WEBP;
+    }
+
+
+    /**
+     * Vrací formát, v kterém se má vygenerovaná miniatura uložit.
+     * @return string|null
+     */
+    public function getSaveAs()
+    {
+        return $this->saveAs;
     }
 }

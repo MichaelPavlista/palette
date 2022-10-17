@@ -210,12 +210,21 @@ class CurrentExecution implements IPictureGenerator
             $fileName .= $created . '.';
         }
 
-        // Create picture extension.
+        //// Vytvoříme příponu vygenerované miniatury.
+        // Načteme příponu zdrojového obrázku.
         $pictureExtension = pathinfo($sourceImage, PATHINFO_EXTENSION);
 
-        if($picture->isWebp() && strtolower($pictureExtension) !== 'webp')
+        // Načteme formát, do kterého chceme obrázek přeuložit.
+        $thumbExtension = $picture->getSaveAs();
+
+        if ($thumbExtension)
         {
-            $pictureExtension .= '.webp';
+            $pictureExtensionNormalized = strtolower($pictureExtension);
+
+            if ($thumbExtension !== $pictureExtensionNormalized)
+            {
+                $pictureExtension .= '.' . $thumbExtension;
+            }
         }
 
         return $fileName . $pictureExtension;

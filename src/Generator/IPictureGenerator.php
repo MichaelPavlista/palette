@@ -88,6 +88,14 @@ interface IPictureGenerator
 
 
     /**
+     * Vrací cestu k pojmenovanému fallback image.
+     * @param string $name
+     * @return string|null
+     */
+    public function getNamedFallbackImage(string $name);
+
+
+    /**
      * Set default image quality
      * @param $quality
      */

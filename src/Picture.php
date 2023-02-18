@@ -47,6 +47,9 @@ class Picture
     /** @var string|null save image in custom image format viz. EPictureFormat:*) */
     protected $saveAs = null;
 
+    /** @var string|null custom fallback image */
+    protected $fallbackImg = null;
+
     /** @var array applied effects on picture */
     protected $effect = array();
 
@@ -88,7 +91,7 @@ class Picture
         }
 
         // SUPPORT FOR PALETTE IMAGE QUERY
-        if(strpos($image, '@'))
+        if(strpos($image, '@') !== false)
         {
             $imageParts  = explode('@', $image);
             $this->image = realpath($imageParts[0]);
@@ -169,6 +172,14 @@ class Picture
                         continue;
                     }
 
+                    // Support for fallback image definition.
+                    if ($effectClass === 'Palette\Effect\FallbackImg' && isset($effectQuery[1]))
+                    {
+                        $this->fallbackImg = $effectQuery[1];
+
+                        continue;
+                    }
+
                     // SUPPORT PROGRESSIVE IMAGE SAVING ARGUMENT IN PALETTE QUERY
                     if($effectClass === 'Palette\Effect\Progressive')
                     {
@@ -191,14 +202,34 @@ class Picture
             $this->image = realpath($image);
         }
 
-        // CHECK IF IMAGE EXISTS AND IS READABLE
-        if(!file_exists($this->image) || !is_readable($this->image) || !is_file($this->image))
+        // Check if image exists and is readable.
+        // If not -> try use fallback image.
+        if(
+            !file_exists($this->image)
+            || !is_readable($this->image)
+            || !is_file($this->image)
+        )
         {
-            // USE FALLBACK IMAGE INSTEAD
-            if($fallbackImage && file_exists($fallbackImage) && is_readable($fallbackImage))
+            // Use defined named fallback image (in palette query).
+            if (
+                $this->fallbackImg
+                && $pictureGenerator
+                && ($namedFallbackImage = $pictureGenerator->getNamedFallbackImage($this->fallbackImg))
+            )
+            {
+                $this->image = $namedFallbackImage;
+            }
+            // Use defined default fallback image.
+            elseif (
+                $fallbackImage
+                && file_exists($fallbackImage)
+                && is_readable($fallbackImage)
+                && is_file($fallbackImage)
+            )
             {
                 $this->image = $fallbackImage;
             }
+            // No default image can by used.
             else
             {
                 throw new Exception("Image file missing or not readable, query: $image");
@@ -517,6 +548,12 @@ class Picture
         }
 
         $command .= 'Quality;' . $this->quality . '&';
+
+        // Support for named default image.
+        if ($this->fallbackImg)
+        {
+            $command .= 'FallbackImg;' . $this->fallbackImg . '&';
+        }
 
         // Podpora pro možnost definovat cílový formát ukládaného obrázku.
         if ($this->saveAs)

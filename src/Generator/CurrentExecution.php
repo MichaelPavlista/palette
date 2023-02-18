@@ -38,6 +38,9 @@ class CurrentExecution implements IPictureGenerator
     /** @var string|null absolute path to fallback image */
     protected $fallbackImage;
 
+    /** @var array<string, string> */
+    protected $fallbackImages;
+
     /** @var IPictureLoader witch can modify or change loaded picture */
     protected $pictureLoader;
 
@@ -240,7 +243,12 @@ class CurrentExecution implements IPictureGenerator
     {
         $fallbackImagePath = realpath($fallbackImage);
 
-        if(file_exists($fallbackImagePath) && is_readable($fallbackImagePath))
+        if(
+            $fallbackImagePath
+            && file_exists($fallbackImagePath)
+            && is_readable($fallbackImagePath)
+            && is_file($fallbackImagePath)
+        )
         {
             $this->fallbackImage = $fallbackImagePath;
 
@@ -258,6 +266,60 @@ class CurrentExecution implements IPictureGenerator
     public function getFallbackImage()
     {
         return $this->fallbackImage;
+    }
+
+
+    /**
+     * Set named fallback images.
+     * @param array<string, string> $fallbackImages
+     * @return void
+     */
+    public function setNamedFallbackImages(array $fallbackImages)
+    {
+        foreach ($fallbackImages as $name => $path)
+        {
+            // Fallback image name check.
+            if(!is_string($name) || !preg_match('/^[a-zA-Z0-9_-]+$/', $name))
+            {
+                throw new Exception('Palette fallback image name must match expression ^[a-zA-Z0-9_-]+$');
+            }
+
+            // Fallback image source check.
+            $realPath = realpath($path);
+
+            if (
+                !$realPath
+                || !file_exists($realPath)
+                || !is_readable($realPath)
+                || !is_file($realPath)
+            )
+            {
+                throw new Exception("Default image '$name' source file is missing or not readable, path: '$path'");
+            }
+
+            $this->fallbackImages[$name] = $realPath;
+        }
+    }
+
+
+    /**
+     * Get named fallback images.
+     * @return array<string, string>
+     */
+    public function getNamedFallbackImages()
+    {
+        return $this->fallbackImages;
+    }
+
+
+    /**
+     * Vrací cestu k pojmenovanému fallback image.
+     * @param string $name
+     * @return string|null
+     */
+    public function getNamedFallbackImage(string $name)
+    {
+        return $this->fallbackImages[$name] ?? null;
     }
 
 

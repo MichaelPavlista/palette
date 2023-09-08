@@ -38,8 +38,8 @@ class Border extends PictureEffect
      */
     public function __construct($width = 1, $height = 1, $color = '#000')
     {
-        $this->width  = $width;
-        $this->height = $height;
+        $this->width  = (int) $width;
+        $this->height = (int) $height;
         $this->color  = $color;
     }
 

@@ -63,8 +63,8 @@ class Resize extends PictureEffect
             $height = $width;
         }
 
-        $this->width  = $width;
-        $this->height = $height;
+        $this->width  = (int) $width;
+        $this->height = (int) $height;
         $this->resizeMode = $resizeMode;
         $this->resizeSmaller = $resizeSmaller ? 1 : 0;
         $this->color = $color;

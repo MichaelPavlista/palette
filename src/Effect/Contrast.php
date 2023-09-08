@@ -34,7 +34,7 @@ class Contrast extends PictureEffect
      */
     public function __construct($contrast)
     {
-        $this->contrast = $contrast;
+        $this->contrast = (int) $contrast;
     }
 
 

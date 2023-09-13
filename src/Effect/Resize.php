@@ -63,8 +63,8 @@ class Resize extends PictureEffect
             $height = $width;
         }
 
-        $this->width  = $width;
-        $this->height = $height;
+        $this->width = (int) $width;
+        $this->height = (int) $height;
         $this->resizeMode = $resizeMode;
         $this->resizeSmaller = $resizeSmaller ? 1 : 0;
         $this->color = $color;
@@ -164,7 +164,11 @@ class Resize extends PictureEffect
             $height = max($imagick->getImageHeight() * $ratioH, $imagick->getImageHeight() * $ratioW);
             $ratio  = max($width / $imagick->getImageWidth(), $height / $imagick->getImageHeight());
 
-            $imagick->scaleImage(round($imagick->getImageWidth() * $ratio), round($imagick->getImageHeight() * $ratio), TRUE);
+            $imagick->scaleImage(
+                (int) round($imagick->getImageWidth() * $ratio),
+                (int) round($imagick->getImageHeight() * $ratio),
+                TRUE
+            );
         }
         elseif($this->resizeMode === $this::MODE_STRETCH)
         {
@@ -178,9 +182,8 @@ class Resize extends PictureEffect
             $rectangle->setFormat('png');
             $rectangle->newImage($this->width, $this->height, new \ImagickPixel($this->color ?: 'transparent'));
             $rectangle->compositeImage($imagick, $imagick->getImageCompose(),
-
-                ($rectangle->getImageWidth() - $imagick->getImageWidth()) / 2,
-                ($rectangle->getImageHeight() - $imagick->getImageHeight()) / 2
+                (int) floor(($rectangle->getImageWidth() - $imagick->getImageWidth()) / 2),
+                (int) floor(($rectangle->getImageHeight() - $imagick->getImageHeight()) / 2)
             );
 
             $picture->setResource($rectangle);

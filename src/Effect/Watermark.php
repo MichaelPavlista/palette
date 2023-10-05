@@ -157,7 +157,12 @@ class Watermark extends PictureEffect
                 break;
         }
 
-        $image->compositeImage($watermark, $watermark->getImageCompose(), $positionX, $positionY);
+        $image->compositeImage(
+            $watermark,
+            $watermark->getImageCompose(),
+            (int) floor($positionX),
+            (int) floor($positionY)
+        );
     }
 
 

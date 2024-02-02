@@ -948,7 +948,10 @@ class Picture
 
         if(file_exists($imageFile))
         {
-            header('Content-Type: image');
+            $imageMimeType = mime_content_type($imageFile) ?: 'image/*';
+
+            header('Content-Disposition: inline');
+            header("Content-Type: $imageMimeType");
             header('Content-Length: ' . filesize($imageFile));
 
             readfile($imageFile);

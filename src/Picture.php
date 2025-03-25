@@ -252,6 +252,7 @@ class Picture
     {
         $imagick = new Imagick($files);
         $imagick->setResourceLimit(6, 1);
+        $imagick->autoOrient();
 
         return $imagick;
     }
@@ -492,13 +493,13 @@ class Picture
                 return $this->normalizeGdResource($this->fixGdRotation($imageFile, imagecreatefromjpeg($imageFile)));
 
             case 'image/gif':
-                return $this->normalizeGdResource(imagecreatefromgif($imageFile));
+                return $this->normalizeGdResource($this->fixGdRotation($imageFile, imagecreatefromgif($imageFile)));
 
             case 'image/png':
-                return $this->normalizeGdResource(imagecreatefrompng($imageFile));
+                return $this->normalizeGdResource($this->fixGdRotation($imageFile, imagecreatefrompng($imageFile)));
 
             case 'image/webp':
-                return $this->normalizeGdResource(imagecreatefromwebp($imageFile));
+                return $this->normalizeGdResource($this->fixGdRotation($imageFile, imagecreatefromwebp($imageFile)));
         }
 
         throw new Exception('GD resource not supported image extension');

@@ -489,7 +489,7 @@ class Picture
         {
             case 'image/jpg':
             case 'image/jpeg':
-                return $this->normalizeGdResource(imagecreatefromjpeg($imageFile));
+                return $this->normalizeGdResource($this->fixGdRotation($imageFile, imagecreatefromjpeg($imageFile)));
 
             case 'image/gif':
                 return $this->normalizeGdResource(imagecreatefromgif($imageFile));
@@ -504,6 +504,27 @@ class Picture
         throw new Exception('GD resource not supported image extension');
     }
 
+    private function fixGdRotation($imageFile, $resource)
+    {
+        if (function_exists('exif_read_data')) {
+            $exif = @exif_read_data($imageFile);
+            if (!empty($exif['Orientation'])) {
+                switch ($exif['Orientation']) {
+                    case 3:
+                        $resource = imagerotate($resource, 180, 0);
+                        break;
+                    case 6:
+                        $resource = imagerotate($resource, -90, 0);
+                        break;
+                    case 8:
+                        $resource = imagerotate($resource, 90, 0);
+                        break;
+                }
+            }
+        }
+
+        return $resource;
+    }
 
     /**
      * @param $resource

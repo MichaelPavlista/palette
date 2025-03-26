@@ -252,7 +252,6 @@ class Picture
     {
         $imagick = new Imagick($files);
         $imagick->setResourceLimit(6, 1);
-        $imagick->autoOrient();
 
         if ($files !== NULL)
         {

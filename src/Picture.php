@@ -729,7 +729,7 @@ class Picture
         // CREATE DIRECTORY BY FILE PATH
         if(!file_exists($directory = dirname($file)))
         {
-            if (!mkdir($directory, 0777, TRUE) && !is_dir($directory)) {
+            if (!@mkdir($directory, 0777, TRUE) && !is_dir($directory)) {
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $directory));
             }
         }

@@ -71,7 +71,7 @@ class Picture
      * @param string|null $fallbackImage absolute path to image witch can be used when source image is missing
      * @throws Exception|ReflectionException
      */
-    public function __construct($image, IPictureGenerator $pictureGenerator = NULL, $worker = NULL, $fallbackImage = NULL)
+    public function __construct($image, ?IPictureGenerator $pictureGenerator = NULL, $worker = NULL, $fallbackImage = NULL)
     {
         // LOAD PICTURE FALLBACK IMAGE FROM GENERATOR
         if(!$fallbackImage && $pictureGenerator)

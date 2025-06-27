@@ -293,7 +293,17 @@ class Resize extends PictureEffect
             $realHeight = floor($origHeight / $resizeRatio);
         }
 
-        $pictureResized   = imagecreatetruecolor($realWidth, $realHeight);
+        if ($realWidth < 1)
+        {
+            $realWidth = 1;
+        }
+
+        if ($realHeight < 1)
+        {
+            $realHeight = 1;
+        }
+
+        $pictureResized = imagecreatetruecolor($realWidth, $realHeight);
         $transparentColor = imagecolorallocatealpha($pictureResized, 0, 0, 0, 127);
 
         imagefill($pictureResized, 0, 0, $transparentColor);

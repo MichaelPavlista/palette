@@ -249,7 +249,7 @@ class Watermark extends PictureEffect
                 break;
         }
 
-        imagecopy($resource, $watermark, $positionX, $positionY, 0, 0, $watermarkWidth, $watermarkHeight);
+        imagecopy($resource, $watermark, (int) $positionX, (int) $positionY, 0, 0, $watermarkWidth, $watermarkHeight);
 
         return $resource;
     }

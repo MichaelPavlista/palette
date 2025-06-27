@@ -72,14 +72,14 @@ class Opacity extends PictureEffect
             }
 
             // MODIFY IMAGE PIXELS
-            for($x = 0; $x < $w; $x++)
+            for ($x = 0; $x < $w; $x++)
             {
-                for($y = 0; $y < $h; $y++)
+                for ($y = 0; $y < $h; $y++)
                 {
                     $colorXY = imagecolorat($resource, $x, $y);
                     $alpha = ($colorXY >> 24) & 0xFF;
 
-                    if($minimalAlpha !== 127)
+                    if ($minimalAlpha !== 127)
                     {
                         $alpha = 127 + 127 * $this->opacity * ($alpha - 127) / (127 - $minimalAlpha);
                     }
@@ -89,12 +89,11 @@ class Opacity extends PictureEffect
                     }
 
                     $alphaColorXY = imagecolorallocatealpha(
-
                         $resource,
                         ($colorXY >> 16) & 0xFF,
                         ($colorXY >> 8) & 0xFF,
                         $colorXY & 0xFF,
-                        $alpha
+                        (int) $alpha,
                     );
 
                     // MODIFY SINGLE PIXEL VALUE

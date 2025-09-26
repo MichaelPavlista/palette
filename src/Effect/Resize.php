@@ -270,15 +270,15 @@ class Resize extends PictureEffect
 
                 $widthTmp = $origHeight * $this->width / $this->height;
 
-                $resizeX = ($origWidth - $widthTmp) / 2;
+                $resizeX = floor(($origWidth - $widthTmp) / 2);
                 $origWidth = $widthTmp;
             }
             elseif(($origWidth / $origHeight) < ($this->width / $this->height)) {
 
                 $heightTmp = $origWidth * $this->height / $this->width;
 
-                $resizeY = ($origHeight - $heightTmp) / 2;
-                $origHeight = $heightTmp;
+                $resizeY = floor(($origHeight - $heightTmp) / 2);
+                $origHeight = round($heightTmp);
             }
         }
         // DEFAULT RESIZE METHOD FIT

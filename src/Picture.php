@@ -472,7 +472,10 @@ class Picture
         imagealphablending($trueColor, TRUE);
 
         imagecopy($trueColor, $resource, 0, 0, 0, 0, $width, $height);
-        imagedestroy($resource);
+
+        if (PHP_VERSION_ID < 80000) {
+            imagedestroy($resource);
+        }
 
         imagesavealpha($trueColor, TRUE);
 

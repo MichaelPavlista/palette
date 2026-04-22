@@ -76,7 +76,9 @@ class Rotate extends PictureEffect
 
                 imagecopy($backgroundImage, $resource, 0, 0, 0, 0, $width, $height);
 
-                imagedestroy($resource);
+                if (PHP_VERSION_ID < 80000) {
+                    imagedestroy($resource);
+                }
 
                 $picture->setResource($backgroundImage);
 
